@@ -39,6 +39,16 @@
         }
       ],
       "context": { "container": { "type": "none", "confidence": 0 }, "brandMarks": [], "placeHint": null, "scaleVisible": false }
+    },
+    "fixture:broth-near-miss": {
+      "items": [
+        {
+          "itemId": "i1", "regionId": null, "name": "chicken broth", "preparation": null,
+          "alternatives": [{ "name": "chicken stock", "confidence": 0.12 }],
+          "grams": { "low": 200, "likely": 250, "high": 300 }, "confidence": 0.8, "bbox": [0.2, 0.2, 0.5, 0.5]
+        }
+      ],
+      "context": { "container": { "type": "bowl", "confidence": 0.8 }, "brandMarks": [], "placeHint": null, "scaleVisible": false }
     }
   }
 }

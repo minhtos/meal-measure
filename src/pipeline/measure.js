@@ -5,9 +5,11 @@ import { randomUUID } from 'node:crypto';
 import { identifyFood } from '../model/spark.js';
 import { segmentItems } from '../model/sam.js';
 import { getMode } from '../model/mock.js';
-import { computeNutrients, rangeMiddle } from '../nutrition/nutrients.js';
+import { computeNutrients, rangeMiddle, NUTRIENT_KEYS } from '../nutrition/nutrients.js';
 import { hasUsdaKey, searchFoods } from '../nutrition/usda.js';
-import { lookupFixture } from '../nutrition/fixtures.js';
+import { searchFixtures } from '../nutrition/fixtures.js';
+import { rankCandidates, nearMissReasons } from '../nutrition/match.js';
+import { resolveUpc } from './barcode.js';
 
 export class UnconfirmedScaleReadingError extends Error {
   constructor(msg = 'scale reading is unconfirmed: confirmScale() first') {
@@ -46,20 +48,50 @@ export function toGrams(value, unit, secondary = null) {
 }
 
 // ---- food resolution + nutrient pricing ----
-async function resolvePer100g(name) {
-  if (getMode() === 'live' && hasUsdaKey()) {
-    const [hit] = await searchFoods(name);
-    if (!hit) return null;
-    return { per100g: hit.per100g, source: { db: 'usda-fdc', id: String(hit.id), dataType: hit.dataType, fetchedAt: hit.fetchedAt } };
+// opts (all optional): env, fetchImpl (one injectable transport for the model
+// calls and USDA/OFF lookups), cacheDir (USDA cache), barcodes ({itemId: code}).
+const sourceOf = (c) => ({ db: c.db, id: c.id, dataType: c.dataType, fetchedAt: c.fetchedAt });
+
+// Database rows for a food name: USDA FDC search live, the fixture table in mock.
+async function searchRows(name, opts) {
+  if (getMode(opts.env) === 'live' && hasUsdaKey(opts.env)) {
+    const hits = await searchFoods(name, { env: opts.env, fetch: opts.fetchImpl, cacheDir: opts.cacheDir });
+    return hits.map((h) => ({ db: 'usda-fdc', id: String(h.id), name: h.description, dataType: h.dataType, per100g: h.per100g, fetchedAt: h.fetchedAt }));
   }
-  const fx = lookupFixture(name);
-  return fx && { per100g: fx.per100g, source: { db: 'fixture', id: fx.id, dataType: 'test-fixture', fetchedAt: null } };
+  return searchFixtures(name);
 }
 
-async function applyFood(item, name) {
-  const match = await resolvePer100g(name);
-  item.per100g = match?.per100g ?? null;
-  item.nutrientSource = match?.source ?? null;
+// A scanned barcode is an exact hit (score 1) from OFF or USDA branded. Open
+// Food Facts has no text search locally, so barcode is the only way OFF joins.
+async function barcodeRow(code, opts, warnings) {
+  try {
+    const r = await resolveUpc(code, { env: opts.env, fetch: opts.fetchImpl });
+    if (r.status !== 'matched') {
+      if (r.status === 'lookup-failed') warnings.push({ code: 'barcode-lookup-failed', message: `Barcode ${code}: ${r.reason}` });
+      return null;
+    }
+    if (!NUTRIENT_KEYS.every((k) => typeof r.per100g[k] === 'number')) return null; // cannot be priced
+    const off = r.source === 'off-local';
+    const brand = r.product.brands ? ` (${r.product.brands})` : '';
+    return { db: off ? 'off' : 'usda-fdc', id: String(r.product.id), name: `${r.product.name}${brand}`, dataType: off ? 'off-product' : 'Branded', per100g: r.per100g, fetchedAt: null, score: 1 };
+  } catch (err) {
+    warnings.push({ code: 'barcode-lookup-failed', message: `Barcode ${code}: ${err.message}` });
+    return null;
+  }
+}
+
+// Ranks the candidates, makes the top one the nutrient source, and prices it.
+// userDecided: the user chose this food, so there is nothing left to flag.
+async function applyFood(item, name, opts = {}, { barcode = null, warnings = [], userDecided = false } = {}) {
+  const rows = await searchRows(name, opts);
+  const row = barcode && (await barcodeRow(barcode, opts, warnings));
+  item.matchCandidates = rankCandidates(name, row ? [row, ...rows] : rows);
+  const [win] = item.matchCandidates;
+  item.per100g = win?.per100g ?? null;
+  item.nutrientSource = win ? sourceOf(win) : null;
+  if (!('originalNutrientSource' in item.provenance)) item.provenance.originalNutrientSource = item.nutrientSource; // the auto pick, kept for good
+  item.nearMissReasons = userDecided ? [] : nearMissReasons(item.matchCandidates, item.food.identificationConfidence);
+  item.nearMiss = item.nearMissReasons.length > 0;
   price(item);
 }
 
@@ -82,9 +114,10 @@ const find = (entry, itemId) => {
 };
 
 // ---- build ----
-export async function buildEntry(photoRef) {
-  const spark = await identifyFood(photoRef);
-  const sam = await segmentItems(photoRef, spark.items);
+export async function buildEntry(photoRef, opts = {}) {
+  const spark = await identifyFood(photoRef, opts);
+  const sam = await segmentItems(photoRef, spark.items, opts);
+  const warnings = [];
   const brands = spark.context.brandMarks.map((b) => b.text.toLowerCase());
 
   const items = [];
@@ -99,8 +132,8 @@ export async function buildEntry(photoRef) {
         source: 'spark',
         identificationConfidence: Math.min(1, Math.round((s.confidence + boost) * 100) / 100),
         originalModelName: s.name,
-        alternatives: s.alternatives,
       },
+      alternatives: s.alternatives, // Spark's own runners-up; sits beside matchCandidates
       corrected: false,
       portion: { grams: null, loggedGrams: null, source: null, confidence: 'none', mask: seg.maskStatus, photoEstimate: null },
       mask: seg.mask,
@@ -111,7 +144,7 @@ export async function buildEntry(photoRef) {
       item.portion.photoEstimate = { low: s.grams.low, high: s.grams.high };
       setPortion(item, s.grams.low, s.grams.high, 'photo-estimate', 'low');
     }
-    await applyFood(item, s.name);
+    await applyFood(item, s.name, opts, { barcode: opts.barcodes?.[s.itemId], warnings });
     items.push(item);
   }
   return {
@@ -119,18 +152,38 @@ export async function buildEntry(photoRef) {
     items,
     context: spark.context,
     scale: null,
-    warnings: [],
+    warnings,
     provenance: { calls: [spark.provenance, ...(sam.provenance.calls ?? [sam.provenance])], strippedNutrientFields: spark.provenance.strippedNutrientFields },
   };
 }
 
 // ---- corrections and anchors ----
-export async function applyCorrection(entry, itemId, correctedFoodName) {
+export async function applyCorrection(entry, itemId, correctedFoodName, opts = {}) {
   const next = structuredClone(entry);
   const item = find(next, itemId);
   item.food = { ...item.food, name: correctedFoodName, source: 'user-corrected', identificationConfidence: 'confirmed' };
   item.corrected = true;
-  await applyFood(item, correctedFoodName); // same portion, new per-100g
+  await applyFood(item, correctedFoodName, opts, { userDecided: true }); // same portion, new per-100g
+  return next;
+}
+
+// Picks one of the item's matchCandidates as the nutrient source. Same
+// semantics as applyCorrection: the same portion is repriced from the new
+// per-100g, the item becomes user-corrected, and the original nutrient source
+// stays in provenance. The candidate list itself is untouched, so the user can
+// pick again. (entry is the working state, as for every other mutator here.)
+export function selectMatchCandidate(entry, itemId, candidateId) {
+  const next = structuredClone(entry);
+  const item = find(next, itemId);
+  const pick = item.matchCandidates?.find((c) => c.candidateId === candidateId);
+  if (!pick) throw new Error(`no match candidate ${candidateId} on item ${itemId}`);
+  item.food = { ...item.food, name: pick.name, source: 'user-corrected', identificationConfidence: 'confirmed' };
+  item.corrected = true;
+  item.per100g = pick.per100g;
+  item.nutrientSource = sourceOf(pick);
+  item.nearMissReasons = [];
+  item.nearMiss = false;
+  price(item);
   return next;
 }
 
@@ -231,6 +284,7 @@ export function logEntry(entry, { now = new Date() } = {}) {
       food: { name: i.food.name, source: i.food.source, identificationConfidence: i.food.identificationConfidence, originalModelName: i.food.originalModelName },
       portion: { ...i.portion },
       nutrientSource: i.nutrientSource,
+      originalNutrientSource: i.provenance.originalNutrientSource,
       nutrients: i.nutrients,
       logged: Object.fromEntries(Object.entries(i.nutrients).map(([k, v]) => [k, v.likely])),
     })),

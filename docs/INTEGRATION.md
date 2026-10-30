@@ -244,6 +244,74 @@ confidence → `confirmed`), re-runs the food match, and **recomputes nutrients
 for the corrected food at the same portion**. The corrected entry is what is
 logged; the original Spark name is kept in provenance.
 
+### 6.1 Near-miss match candidates (food-match correction)
+
+Every item carries one correction surface, built by `buildEntry`
+(`src/pipeline/measure.js`):
+
+| Field | Meaning |
+|-------|---------|
+| `matchCandidates` | up to 5 database records for the item's name, **ordered by `score`, descending** (ties keep the database's own order). Nothing is hidden. |
+| `nearMiss`, `nearMissReasons` | whether the match deserves a second look, and why |
+| `alternatives` | Spark's own runners-up (`{name, confidence}`), carried through unchanged |
+
+A candidate is `{candidateId: "<db>:<id>", db, id, name, dataType,
+per100g: {kcal, protein, carbs, fat}, score, formConcern, fetchedAt}`.
+`db` is `usda-fdc`, `off`, or `fixture` (mock mode). The first candidate is the
+winner and is the item's `nutrientSource`.
+
+**Where candidates come from.** USDA FDC text search (Foundation + SR Legacy,
+top 5) live, or the fixture table in mock mode. When a barcode is supplied
+(`buildEntry(photo, {barcodes: {itemId: code}})`), the `resolveUpc` hit (OFF
+local import, else USDA branded) joins the list as an exact match, score 1.
+Open Food Facts has no local text search, so a brand mark alone yields no OFF
+candidate; brand marks only raise identification confidence. Records without a
+full kcal/protein/carbs/fat panel cannot be priced and are not listed.
+
+**Score.** Dice coefficient over lower-cased word sets of the item name and the
+record name (light plural stemming), 0 to 1, 3 decimals: `2·shared / (|name| +
+|record|)`. Extra or missing words both lower it. The score is ours, not the
+database's rank.
+
+**Form sanity.** A candidate gets `formConcern: "<term>"` when its name
+contains a dry/concentrated term (`dry`, `dried`, `dehydrated`, `powder`,
+`powdered`, `concentrate`, `concentrated`, `bouillon`, `cube`, `mix`,
+`instant`) that the item's own name does not. The flag is advisory: the
+candidate stays in the list at its score.
+
+**The near-miss rule (exact).** `nearMiss` is true when at least one holds
+(`src/nutrition/match.js`, constants in `NEAR_MISS`); `nearMissReasons` lists
+the ones that fired, in this order:
+
+1. `close-scores`: there are two or more candidates and
+   `top1.score − top2.score ≤ 0.15 × top1.score`.
+2. `low-score`: `top1.score < 0.5`.
+3. `low-identification-confidence`: Spark's identification confidence
+   (including the brand-mark boost) is a number `< 0.5`.
+4. `form-concern`: the winner has a `formConcern`.
+
+No candidates is a separate state (`nutrientSource: null`, logging refused) and
+is not a near miss. Once the user decides (typed correction or
+`selectMatchCandidate`) `nearMiss` is false and `nearMissReasons` is empty.
+
+**Reselection.** `selectMatchCandidate(entry, itemId, candidateId)` returns a
+copy of the entry where the item's nutrient source and `per100g` are the chosen
+candidate's and nutrients are recomputed at the **same grams**. As with a typed
+correction, `food.source` becomes `user-corrected`, identification confidence
+`confirmed`, `food.name` the candidate's name, and `originalModelName` is kept;
+the auto-picked source stays in `provenance.originalNutrientSource` (and in the
+logged item as `originalNutrientSource`). The candidate list is left as is, so
+the user can pick again. The pipeline has no session object yet, so the first
+argument is the entry (the working state), like every other operation here.
+A typed correction (`applyCorrection`) re-runs the search for the new name and
+replaces the list.
+
+**UI (attaches later).** `matchCandidates` renders as a dropdown: opened by
+default when `nearMiss` is true, one tap away otherwise. Each row shows the
+name and kcal/100g, so a wrong-form candidate (dry bouillon at 235 kcal vs
+ready-to-serve broth at 7) is easy to spot. `alternatives` feed the same
+correction control.
+
 ---
 
 ## 7. Contract B — SAM segmentation (coarse-to-fine)

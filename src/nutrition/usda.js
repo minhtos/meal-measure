@@ -2,6 +2,7 @@
 // is sent in a header, so it never appears in a URL, cache file, or error.
 import { createHash } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { pathToFileURL } from 'node:url';
 
 const BASE = 'https://api.nal.usda.gov/fdc/v1/foods/search';
 const CACHE_DIR = new URL('../../.cache/usda/', import.meta.url); // gitignored
@@ -60,12 +61,14 @@ export async function lookupBrandedGtin(code, opts = {}) {
   };
 }
 
-// opts.fetch lets callers inject a transport; opts.env defaults to process.env.
+// opts.fetch lets callers inject a transport; opts.env defaults to process.env;
+// opts.cacheDir overrides the on-disk cache (tests use a temp dir).
 export async function searchFoods(query, opts = {}) {
   const env = opts.env ?? process.env;
   if (!hasUsdaKey(env)) throw new NoUsdaKeyError();
 
-  const cacheFile = new URL(`${createHash('sha256').update(query.toLowerCase()).digest('hex')}.json`, CACHE_DIR);
+  const cacheDir = opts.cacheDir ? pathToFileURL(`${opts.cacheDir}/`) : CACHE_DIR;
+  const cacheFile = new URL(`${createHash('sha256').update(query.toLowerCase()).digest('hex')}.json`, cacheDir);
   let cached = null;
   try {
     cached = JSON.parse(await readFile(cacheFile, 'utf8'));
@@ -77,7 +80,7 @@ export async function searchFoods(query, opts = {}) {
     const res = await (opts.fetch ?? fetch)(url, { headers: { 'X-Api-Key': env.USDA_API_KEY } });
     if (!res.ok) throw new Error(`USDA FoodData Central search failed: HTTP ${res.status}`);
     cached = { fetchedAt: new Date().toISOString(), body: await res.json() };
-    await mkdir(CACHE_DIR, { recursive: true });
+    await mkdir(cacheDir, { recursive: true });
     await writeFile(cacheFile, JSON.stringify(cached));
   }
   return (cached.body.foods ?? [])
