@@ -5,6 +5,7 @@
 // POST /v1/responses. Prompts must be the simplest noun ('the plate'); descriptive
 // prompts return HTTP 200 with EMPTY text, so empty => simplify and retry once.
 import { getMode, loadFixture, mockProvenance } from './mock.js';
+import { decodeMask, maskOutline, MaskDecodeError, UnsupportedMaskEncoding } from './maskCodec.js';
 import { loadPhoto, samRespond, provenanceOf, ModelCallError } from './client.js';
 
 const DISH_PROMPTS = ['the plate', 'the bowl'];
@@ -23,17 +24,47 @@ export function parseSegments(text) {
   return out;
 }
 
-// Mask spike (see PROVENANCE/summary): the data string is not decoded; every
-// segment is represented by its box as a 4-point polygon, maskStatus 'box'.
-export function segmentToMask(seg, size) {
+// Box fallback: the segment is represented by its box as a 4-point polygon.
+function boxMask(seg, size, maskStatus, maskError = null) {
   const { x1, y1, x2, y2 } = seg.box;
   const [W, H] = size ?? [null, null];
   return {
     polygon: [[x1, y1], [x2, y1], [x2, y2], [x1, y2]], // pixel space of the input image
     bbox: W ? [x1 / W, y1 / H, (x2 - x1) / W, (y2 - y1) / H] : null, // normalised [x, y, w, h]
     areaFrac: W ? ((x2 - x1) * (y2 - y1)) / (W * H) : null,
-    rawMask: seg.mask, // verbatim, kept for a future decoder
+    rawMask: seg.mask, // verbatim
+    maskStatus,
+    maskError,
   };
+}
+
+// Decodes the segment's mask (see maskCodec.js) into a polygon + SVG path in input-image
+// pixels. The API box is inclusive, so the raster spans [x1, x2+1) x [y1, y2+1). On ANY
+// failure (or no mask) this degrades to the box and never throws.
+// maskStatus: 'decoded' | 'box' (no mask data) | 'box_unsupported' | 'box_decode_failed'.
+export function segmentToMask(seg, size) {
+  if (!seg.mask) return boxMask(seg, size, 'box');
+  try {
+    const d = decodeMask(seg.mask.data);
+    if (d.foreground === 0) throw new MaskDecodeError('Mask has no foreground pixels.');
+    const { x1, y1, x2, y2 } = seg.box;
+    const sx = (x2 + 1 - x1) / d.width, sy = (y2 + 1 - y1) / d.height;
+    const { path, polygon } = maskOutline(d, { ox: x1, oy: y1, sx, sy });
+    const [W, H] = size ?? [null, null];
+    const area = d.foreground * sx * sy;
+    return {
+      polygon, path, // path: fill-rule evenodd
+      bbox: W ? [x1 / W, y1 / H, (x2 + 1 - x1) / W, (y2 + 1 - y1) / H] : null,
+      areaFrac: W ? area / (W * H) : null,
+      rawMask: seg.mask,
+      maskStatus: 'decoded',
+      maskError: null,
+      raster: { width: d.width, height: d.height, foreground: d.foreground, encoding: d.encoding },
+    };
+  } catch (err) {
+    const status = err instanceof UnsupportedMaskEncoding ? 'box_unsupported' : 'box_decode_failed';
+    return boxMask(seg, size, status, String(err?.message ?? err));
+  }
 }
 
 // 'ground beef 90/10' -> ['the beef', ...]: cleaned last two words, then last word.
@@ -64,8 +95,9 @@ async function segmentLive(photoRef, items, opts) {
     const out = [];
     for (const it of items) {
       const [seg] = await trySam(itemPrompts(it.name), photo, opts, calls);
-      out.push(seg
-        ? { itemId: it.itemId, mask: segmentToMask(seg, photo.size), maskStatus: 'box', maskReason: null }
+      const mask = seg ? segmentToMask(seg, photo.size) : null;
+      out.push(mask
+        ? { itemId: it.itemId, mask, maskStatus: mask.maskStatus, maskReason: null }
         : { itemId: it.itemId, mask: null, maskStatus: 'none', maskReason: 'not_found' });
     }
     return { dish, noDishMask: !dish, items: out, provenance: { calls, mode: 'live' } };

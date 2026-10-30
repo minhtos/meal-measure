@@ -351,6 +351,30 @@ converts to whatever coordinate convention the hosted SAM endpoint expects.
 }
 ```
 
+**Live mask format (SAM 3.1 `/v1/responses`, decoded by `src/model/maskCodec.js`).**
+Segments arrive as text: `<|box;x1;y1;x2;y2;w;h|><|mask;x=..;y=..;data=<H>,<W>,<payload>|>`.
+- The box is **inclusive** (right/bottom pixel included), so the mask raster spans
+  `[x1, x2+1) × [y1, y2+1)`; the raster is box-local (its own `H×W`, scaled to the box).
+  The `x`/`y` header fields are not used as an origin.
+- `payload[0]` is the encoding marker: `~` lossless (API default; adaptive range coder with
+  a spatial predictor, foreground = decoded coverage byte ≥ 129) or `!` one_bit
+  (context-modelled bits). Anything else → typed `UnsupportedMaskEncoding`.
+- The rest is base85 over a custom alphabet (printable ASCII `!`–`~` minus the wire
+  delimiters `" \ , ; < > |`, first 85 symbols), with a 5-char length prefix; framing,
+  group range, and tail padding are validated strictly.
+- Codec output: a `Uint8Array(W*H)` raster of 0/1 plus an **outline**: exact pixel-edge
+  boundary loops as one SVG path (`fill-rule: evenodd`, holes included) and the largest loop
+  as `polygon`, both in input-image pixels. Chosen over smoothed contours because it is
+  lossless and tiny to implement; collinear runs are merged.
+- Adapter mask object: `{ polygon, path, bbox, areaFrac, rawMask, maskStatus, maskError,
+  raster: { width, height, foreground, encoding } }` (the raster itself is not retained).
+  `maskStatus`: `decoded` | `box` (segment had no mask data) | `box_unsupported` |
+  `box_decode_failed`. On **any** decode failure the adapter keeps the box 4-point polygon,
+  keeps `rawMask`, sets `maskError`, and never throws past the pipeline.
+- Known limit: for `one_bit` we skip the reference's re-encode canonical-form check
+  (decode only); lossless is checked as in the reference. Golden tests: pho-meal005 dish =
+  197880 raster bytes / 63415 foreground; tacos-meal004 dish = 461384 / 110599.
+
 **Coarse-to-fine prompting**
 1. **B1 dish pass:** one box prompt covering the central 90 % of the image plus
    a centre point. Pick the highest-score mask with `areaFrac` 0.10–0.95 as

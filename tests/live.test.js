@@ -85,7 +85,7 @@ test('sam live: empty output retries with a simpler prompt, then records not_fou
   const r = await segmentItems(photoPath, [{ itemId: 'i1', name: 'ground beef 90/10' }, { itemId: 'i2', name: 'mystery sauce' }], { env, fetchImpl });
   assert.deepEqual(prompts, ['the plate', 'the ground beef', 'the beef', 'the mystery sauce', 'the sauce']);
   assert.equal(r.noDishMask, false);
-  assert.equal(r.items[0].maskStatus, 'box');
+  assert.equal(r.items[0].maskStatus, 'box'); // item segment carried no mask data
   assert.equal(r.items[0].mask.polygon.length, 4);
   assert.deepEqual(r.items[0].mask.bbox, [0.1, 0.1, 0.4, 0.4]);
   assert.equal(r.items[1].mask, null);
