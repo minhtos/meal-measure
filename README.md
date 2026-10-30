@@ -25,3 +25,7 @@ against recorded sample runs.
 ```bash
 ./scripts/verify
 ```
+
+## Data sources
+
+Nutrient data: USDA FoodData Central (public domain, via API). Packaged-food data: Open Food Facts (https://world.openfoodfacts.org), available under the Open Database License (ODbL). Benchmark method and results: see BENCHMARK.md. Repo provenance: see PROVENANCE.md.
