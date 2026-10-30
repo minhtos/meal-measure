@@ -1,0 +1,163 @@
+{
+  "items": [
+    {
+      "itemId": "i1",
+      "regionId": null,
+      "name": "corn tortilla",
+      "preparation": "warmed",
+      "alternatives": [
+        {
+          "name": "street taco corn tortilla",
+          "confidence": 0.3
+        }
+      ],
+      "grams": {
+        "low": 60,
+        "likely": 90,
+        "high": 120
+      },
+      "confidence": 0.7,
+      "bbox": [
+        0.075,
+        0.117,
+        0.87,
+        0.525
+      ]
+    },
+    {
+      "itemId": "i2",
+      "regionId": null,
+      "name": "seasoned pork (carne enchilada), grilled",
+      "preparation": "grilled",
+      "alternatives": [
+        {
+          "name": "mexican chorizo, cooked",
+          "confidence": 0.45
+        },
+        {
+          "name": "pork al pastor, grilled",
+          "confidence": 0.25
+        }
+      ],
+      "grams": {
+        "low": 110,
+        "likely": 150,
+        "high": 190
+      },
+      "confidence": 0.6,
+      "bbox": [
+        0.14,
+        0.141,
+        0.78,
+        0.45
+      ]
+    },
+    {
+      "itemId": "i3",
+      "regionId": null,
+      "name": "cilantro, chopped",
+      "preparation": null,
+      "alternatives": [],
+      "grams": {
+        "low": 8,
+        "likely": 15,
+        "high": 25
+      },
+      "confidence": 0.85,
+      "bbox": [
+        0.19,
+        0.335,
+        0.63,
+        0.285
+      ]
+    },
+    {
+      "itemId": "i4",
+      "regionId": null,
+      "name": "white onion",
+      "preparation": "grilled",
+      "alternatives": [],
+      "grams": {
+        "low": 10,
+        "likely": 20,
+        "high": 32
+      },
+      "confidence": 0.6,
+      "bbox": [
+        0.2,
+        0.33,
+        0.42,
+        0.16
+      ]
+    },
+    {
+      "itemId": "i5",
+      "regionId": null,
+      "name": "lime wedge",
+      "preparation": null,
+      "alternatives": [],
+      "grams": {
+        "low": 8,
+        "likely": 13,
+        "high": 19
+      },
+      "confidence": 0.9,
+      "bbox": [
+        0.19,
+        0.428,
+        0.37,
+        0.15
+      ]
+    },
+    {
+      "itemId": "i6",
+      "regionId": null,
+      "name": "green chili pepper, roasted",
+      "preparation": "roasted",
+      "alternatives": [
+        {
+          "name": "serrano pepper, roasted",
+          "confidence": 0.4
+        },
+        {
+          "name": "jalapeno pepper, roasted",
+          "confidence": 0.35
+        }
+      ],
+      "grams": {
+        "low": 15,
+        "likely": 24,
+        "high": 35
+      },
+      "confidence": 0.75,
+      "bbox": [
+        0.41,
+        0.3,
+        0.24,
+        0.23
+      ]
+    }
+  ],
+  "context": {
+    "container": {
+      "type": "plate",
+      "confidence": 0.95
+    },
+    "brandMarks": [],
+    "placeHint": {
+      "text": "",
+      "confidence": 0
+    },
+    "scaleVisible": true
+  },
+  "provenance": {
+    "call": "spark.identify",
+    "mode": "live",
+    "model": "muse-spark-1.3",
+    "requestId": "387e0439-538c-492d-b33c-e25b74fe10dc",
+    "inputSha256": "5bfcfd33c8a8da612a0fa4e67e448d55a03596639b69c851d45f609aab2e802c",
+    "at": "2026-10-30T14:04:26.389Z",
+    "latencyMs": 10613,
+    "strippedNutrientFields": false
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "recordedAt": "2026-10-30T14:04:39.722Z",
+  "mode": "live",
+  "models": {
+    "spark": "muse-spark-1.3",
+    "sam": "sam-3.1"
+  },
+  "requestIds": [
+    {
+      "call": "spark.identify",
+      "prompt": null,
+      "requestId": "387e0439-538c-492d-b33c-e25b74fe10dc"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the plate",
+      "requestId": "5a8bbd1d-4c77-4354-9052-72f126e6f631"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the corn tortilla",
+      "requestId": "01f41a44-65be-40a1-aef8-2b71bb81cd2d"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the pork grilled",
+      "requestId": "79928220-a729-4ea3-b1b2-7c87760bcece"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the grilled",
+      "requestId": "3327b64c-ede2-46d5-8734-55f9dba4c760"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the cilantro chopped",
+      "requestId": "d31b32cf-54c9-4d6f-8416-798fed96a7ce"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the chopped",
+      "requestId": "e8afe3ee-9ef8-4a21-852f-a5de1ed77a4f"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the white onion",
+      "requestId": "a3605179-1556-4cf5-a23d-3fe3c8d76236"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the lime wedge",
+      "requestId": "3184050e-1aa1-4e91-b64a-e19c3d4032c6"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the pepper roasted",
+      "requestId": "5e0faf8f-fcd6-48cb-9570-3a8ce393dd64"
+    }
+  ],
+  "inputSha256": "5bfcfd33c8a8da612a0fa4e67e448d55a03596639b69c851d45f609aab2e802c",
+  "codeVersion": "091d09dcba654bf8ceb6895ca5cb5cbb0575f4fd",
+  "recordedBy": "scripts/record-sample.mjs",
+  "errors": []
+}

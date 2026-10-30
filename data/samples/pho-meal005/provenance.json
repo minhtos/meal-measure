@@ -1,0 +1,109 @@
+{
+  "recordedAt": "2026-10-30T14:05:26.157Z",
+  "mode": "live",
+  "models": {
+    "spark": "muse-spark-1.3",
+    "sam": "sam-3.1"
+  },
+  "requestIds": [
+    {
+      "call": "spark.identify",
+      "prompt": null,
+      "requestId": "e5b7aca5-22bd-43ab-9935-24edac88cfd0"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the plate",
+      "requestId": "7c4bbc8f-f96b-498d-b321-1fc9904c40de"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the bowl",
+      "requestId": "d0929655-3d3b-49d5-a3d0-285fab89839c"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the pho broth",
+      "requestId": "6bdd3f01-d48e-4c22-85c5-8b4eef806569"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the broth",
+      "requestId": "839e3bcd-5fb1-49a0-bac6-40e486a18ea7"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the rice noodles",
+      "requestId": "e928dacf-0234-45ab-a0d7-5d9735e171e6"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the noodles",
+      "requestId": "c953b482-faf6-46fb-928c-28000442f4d0"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the beef slices",
+      "requestId": "4cc4988d-45b8-490a-9dd3-d6509d35ad35"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the slices",
+      "requestId": "fa985dc1-d78b-469b-babe-17b1aa382eae"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the beef brisket",
+      "requestId": "c9cd5e40-edc3-4787-853c-cf1b8dcee0db"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the brisket",
+      "requestId": "ad743d73-1d66-4073-be2d-0660b2bff748"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the beef meatball",
+      "requestId": "67a975d2-6c86-4a3c-867e-4e5ef22abfa0"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the meatball",
+      "requestId": "908d2c1c-84a5-48ce-a84e-6256e4a69f1a"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the bean sprouts",
+      "requestId": "96d719f4-6b98-4388-8022-851e6b732552"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the sprouts",
+      "requestId": "90720b3e-fae5-4d62-847e-b1a5dee107b0"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the white onion",
+      "requestId": "5283350e-e0e2-480a-90fd-bcad9108af3b"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the green onion",
+      "requestId": "3af26b33-38ab-4f8a-925b-cc50ce523ea4"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the onion",
+      "requestId": "9996fa2d-cea0-4e2c-84b7-28d6bb3e5032"
+    },
+    {
+      "call": "scale.ocr",
+      "prompt": null,
+      "requestId": "df5ef064-d99c-4778-ad4e-633170ce60bb"
+    }
+  ],
+  "inputSha256": "7c262e4bd9ce0a318cdce2f60ef3f6d727f931bf7656ecff1a1af80e6a35f233",
+  "codeVersion": "091d09dcba654bf8ceb6895ca5cb5cbb0575f4fd",
+  "recordedBy": "scripts/record-sample.mjs",
+  "errors": []
+}

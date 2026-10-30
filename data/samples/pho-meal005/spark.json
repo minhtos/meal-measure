@@ -1,0 +1,218 @@
+{
+  "items": [
+    {
+      "itemId": "i1",
+      "regionId": null,
+      "name": "beef pho broth",
+      "preparation": "simmered",
+      "alternatives": [
+        {
+          "name": "beef noodle soup broth",
+          "confidence": 0.3
+        }
+      ],
+      "grams": {
+        "low": 200,
+        "likely": 260,
+        "high": 330
+      },
+      "confidence": 0.7,
+      "bbox": [
+        0.26,
+        0.29,
+        0.5,
+        0.24
+      ]
+    },
+    {
+      "itemId": "i2",
+      "regionId": null,
+      "name": "cooked rice noodles",
+      "preparation": "boiled",
+      "alternatives": [
+        {
+          "name": "pho noodles, cooked",
+          "confidence": 0.4
+        }
+      ],
+      "grams": {
+        "low": 100,
+        "likely": 140,
+        "high": 180
+      },
+      "confidence": 0.7,
+      "bbox": [
+        0.44,
+        0.39,
+        0.27,
+        0.13
+      ]
+    },
+    {
+      "itemId": "i3",
+      "regionId": null,
+      "name": "rare beef slices",
+      "preparation": "raw",
+      "alternatives": [
+        {
+          "name": "thinly sliced eye of round, rare",
+          "confidence": 0.35
+        }
+      ],
+      "grams": {
+        "low": 40,
+        "likely": 60,
+        "high": 85
+      },
+      "confidence": 0.65,
+      "bbox": [
+        0.25,
+        0.222,
+        0.45,
+        0.23
+      ]
+    },
+    {
+      "itemId": "i4",
+      "regionId": null,
+      "name": "cooked beef brisket",
+      "preparation": "simmered",
+      "alternatives": [
+        {
+          "name": "sliced cooked beef",
+          "confidence": 0.3
+        }
+      ],
+      "grams": {
+        "low": 25,
+        "likely": 40,
+        "high": 60
+      },
+      "confidence": 0.6,
+      "bbox": [
+        0.28,
+        0.45,
+        0.18,
+        0.09
+      ]
+    },
+    {
+      "itemId": "i5",
+      "regionId": null,
+      "name": "beef meatball",
+      "preparation": "boiled",
+      "alternatives": [
+        {
+          "name": "bo vien, Vietnamese beef ball",
+          "confidence": 0.4
+        }
+      ],
+      "grams": {
+        "low": 45,
+        "likely": 65,
+        "high": 85
+      },
+      "confidence": 0.75,
+      "bbox": [
+        0.31,
+        0.3,
+        0.34,
+        0.1
+      ]
+    },
+    {
+      "itemId": "i6",
+      "regionId": null,
+      "name": "bean sprouts",
+      "preparation": null,
+      "alternatives": [
+        {
+          "name": "mung bean sprouts, fresh",
+          "confidence": 0.3
+        }
+      ],
+      "grams": {
+        "low": 20,
+        "likely": 32,
+        "high": 45
+      },
+      "confidence": 0.65,
+      "bbox": [
+        0.47,
+        0.41,
+        0.25,
+        0.11
+      ]
+    },
+    {
+      "itemId": "i7",
+      "regionId": null,
+      "name": "sliced white onion",
+      "preparation": null,
+      "alternatives": [
+        {
+          "name": "raw onion slices",
+          "confidence": 0.3
+        }
+      ],
+      "grams": {
+        "low": 10,
+        "likely": 18,
+        "high": 28
+      },
+      "confidence": 0.7,
+      "bbox": [
+        0.31,
+        0.35,
+        0.31,
+        0.12
+      ]
+    },
+    {
+      "itemId": "i8",
+      "regionId": null,
+      "name": "fresh cilantro and green onion",
+      "preparation": null,
+      "alternatives": [
+        {
+          "name": "fresh herbs for pho",
+          "confidence": 0.3
+        }
+      ],
+      "grams": {
+        "low": 8,
+        "likely": 15,
+        "high": 25
+      },
+      "confidence": 0.7,
+      "bbox": [
+        0.26,
+        0.41,
+        0.24,
+        0.11
+      ]
+    }
+  ],
+  "context": {
+    "container": {
+      "type": "bowl",
+      "confidence": 0.95
+    },
+    "brandMarks": [],
+    "placeHint": {
+      "text": "",
+      "confidence": 0
+    },
+    "scaleVisible": true
+  },
+  "provenance": {
+    "call": "spark.identify",
+    "mode": "live",
+    "model": "muse-spark-1.3",
+    "requestId": "e5b7aca5-22bd-43ab-9935-24edac88cfd0",
+    "inputSha256": "7c262e4bd9ce0a318cdce2f60ef3f6d727f931bf7656ecff1a1af80e6a35f233",
+    "at": "2026-10-30T14:04:50.226Z",
+    "latencyMs": 10366,
+    "strippedNutrientFields": false
+  }
+}
