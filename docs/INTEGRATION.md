@@ -75,6 +75,7 @@ or micronutrient values.
 ```
 src/
   model/          Meta calls only. Knows images, prompts, JSON schemas. No nutrients.
+    index.js        public entry point of the model layer (what pipeline/ imports)
     client.js       fetch wrapper: auth header, timeout, retry, redaction, live|mock switch
     spark.js        identifyFoods(image, regions)        → contract A
     sam.js          segmentDish / segmentItems / refine  → contract B
@@ -83,7 +84,7 @@ src/
     mock.js         replays data/samples/<id>/*.json keyed by image sha256
   nutrition/      Databases and arithmetic only. Knows nothing about models.
     usda.js         FDC search + food detail (per-100g normalisation)
-    off.js          Open Food Facts product lookup (per-100g fields only)
+    off.js          LOCAL Open Food Facts lookup by barcode over the bulk import (§4.1)
     compute.js      computeNutrients(per100g, grams{low,likely,high}) → numbers
     units.js        toGrams(value, unit) — g, kg, oz, lb, lb+oz; volume refused
   pipeline/       The rules. The only layer that imports both.
@@ -97,6 +98,30 @@ test/
   smoke.test.js   §11
   boundary.test.js
 ```
+
+### 4.1 UPC / barcode lookup
+
+Packaged-food scans resolve from **local data**, not a per-scan web query.
+
+1. **Import (one time).** `node scripts/import-off.mjs <products.csv.gz>`
+   streams an Open Food Facts bulk CSV export, keeps rows whose
+   `countries_tags` include `en:united-states` with a usable name and kcal
+   (`energy-kcal_100g`, else `energy_100g` kJ ÷ 4.184), and writes
+   `data/off-us.jsonl` plus `data/off-us.index.json` (code → byte offset).
+   `data/` is gitignored.
+2. **Lookup.** `src/nutrition/off.js` seeks one line via the index. Codes are
+   normalised (UPC-A 12 / EAN-13 / GTIN-14 zero-padding variants).
+3. **Fallback.** Only on a local miss, `src/nutrition/usda.js` searches USDA
+   FoodData Central branded foods by GTIN (needs `USDA_API_KEY`; without it the
+   fallback is skipped and the local miss stands).
+4. **Honest results.** `src/pipeline/barcode.js` `resolveUpc` returns
+   `matched` (source `off-local` | `usda-branded`, per-100g, code-computed
+   nutrients when grams are known), `unmatched` (a data fact), or
+   `lookup-failed` (USDA HTTP/rate-limit error — never reported as unmatched).
+5. **No anonymous per-scan OFF query exists.** The public OFF API rate-limits
+   into false "not found"; the only OFF data path is the bulk import.
+
+Check real data after importing: `node scripts/test-upcs.mjs <upc...>`.
 
 ## 5. Common envelope for every model call
 

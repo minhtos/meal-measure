@@ -26,6 +26,40 @@ export function per100gFromFood(food) {
   return ['kcal', 'protein', 'carbs', 'fat'].every((k) => k in out) ? out : null;
 }
 
+export class UsdaHttpError extends Error {
+  constructor(status) {
+    super(`USDA FoodData Central lookup failed: HTTP ${status}`);
+    this.name = 'UsdaHttpError';
+    this.status = status;
+  }
+}
+
+// Branded-food lookup by GTIN/UPC. Fallback for when the local OFF import
+// misses. Returns a product ({id, name, brands, per100g, servingGrams,
+// fetchedAt}) or null for a genuine miss; HTTP failures (incl. 429) throw
+// UsdaHttpError so callers never mistake them for a miss.
+export async function lookupBrandedGtin(code, opts = {}) {
+  const env = opts.env ?? process.env;
+  if (!hasUsdaKey(env)) throw new NoUsdaKeyError();
+  const digits = String(code).replace(/^0+/, '');
+  const url = `${BASE}?${new URLSearchParams({ query: digits, dataType: 'Branded', pageSize: '10' })}`;
+  const res = await (opts.fetch ?? fetch)(url, { headers: { 'X-Api-Key': env.USDA_API_KEY } });
+  if (!res.ok) throw new UsdaHttpError(res.status);
+  const body = await res.json();
+  const food = (body.foods ?? []).find((f) => String(f.gtinUpc ?? '').replace(/^0+/, '') === digits);
+  const per100g = food && per100gFromFood(food);
+  if (!per100g) return null;
+  const grams = food.servingSizeUnit?.toLowerCase() === 'g' && food.servingSize > 0 ? food.servingSize : null;
+  return {
+    id: food.fdcId,
+    name: food.description,
+    brands: food.brandOwner ?? '',
+    per100g,
+    servingGrams: grams,
+    fetchedAt: new Date().toISOString(),
+  };
+}
+
 // opts.fetch lets callers inject a transport; opts.env defaults to process.env.
 export async function searchFoods(query, opts = {}) {
   const env = opts.env ?? process.env;
