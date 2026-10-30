@@ -1,0 +1,44 @@
+{
+  "_label": "FIXTURE — deterministic mock Spark output, not a real Meta response",
+  "photos": {
+    "fixture:beef-rice-bowl": {
+      "items": [
+        {
+          "itemId": "i1", "regionId": "r1", "name": "ground beef 90/10", "preparation": "cooked",
+          "alternatives": [{ "name": "ground turkey breast", "confidence": 0.2 }],
+          "grams": { "low": 100, "likely": 130, "high": 170 }, "confidence": 0.7,
+          "bbox": [0.1, 0.3, 0.3, 0.3]
+        },
+        {
+          "itemId": "i2", "regionId": null, "name": "cooked white rice", "preparation": "boiled",
+          "alternatives": [{ "name": "cauliflower rice", "confidence": 0.06 }],
+          "grams": { "low": 120, "likely": 160, "high": 210 }, "confidence": 0.72,
+          "bbox": [0.45, 0.35, 0.3, 0.3]
+        }
+      ],
+      "context": { "container": { "type": "bowl", "confidence": 0.8 }, "brandMarks": [], "placeHint": null, "scaleVisible": false }
+    },
+    "fixture:rice-only": {
+      "items": [
+        {
+          "itemId": "i1", "regionId": null, "name": "cooked white rice", "preparation": "boiled",
+          "alternatives": [], "grams": { "low": 120, "likely": 160, "high": 210 }, "confidence": 0.72,
+          "bbox": [0.3, 0.3, 0.4, 0.4]
+        }
+      ],
+      "context": { "container": { "type": "plate", "confidence": 0.7 }, "brandMarks": [], "placeHint": null, "scaleVisible": true }
+    },
+    "fixture:poisoned": {
+      "totalCalories": 9999,
+      "items": [
+        {
+          "itemId": "i1", "regionId": null, "name": "ground beef 90/10", "alternatives": [],
+          "grams": { "low": 100, "likely": 130, "high": 170 }, "confidence": 0.7,
+          "calories": 9999, "kcal": 9999, "protein": 99, "fat": 99, "carbs": 99,
+          "nutrients": { "energy": 9999 }
+        }
+      ],
+      "context": { "container": { "type": "none", "confidence": 0 }, "brandMarks": [], "placeHint": null, "scaleVisible": false }
+    }
+  }
+}

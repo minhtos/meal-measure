@@ -30,8 +30,8 @@ done
 echo "verify: docs/INTEGRATION.md ok"
 
 # 3. Unit / smoke tests (node:test), once any test files exist.
-if [ -d "$ROOT/test" ] && [ -n "$(find "$ROOT/test" -name '*.test.js' -print -quit)" ]; then
-  node --test "$ROOT/test/**/*.test.js" || fail "node --test"
+if [ -d "$ROOT/tests" ] && [ -n "$(find "$ROOT/tests" -name '*.test.js' -print -quit)" ]; then
+  node --test "$ROOT/tests/**/*.test.js" || fail "node --test"
   echo "verify: node --test ok"
 else
   echo "verify: no test files yet — unit test stage skipped"

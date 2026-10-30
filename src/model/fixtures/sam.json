@@ -1,0 +1,11 @@
+{
+  "_label": "FIXTURE — deterministic mock SAM output, not a real Meta response",
+  "photos": {
+    "fixture:beef-rice-bowl": {
+      "dish": { "rle": { "size": [1152, 1536], "counts": "fixture" }, "bbox": [0.05, 0.1, 0.9, 0.8], "areaFrac": 0.55, "score": 0.93 },
+      "items": {
+        "i1": { "rle": { "size": [1152, 1536], "counts": "fixture" }, "bbox": [0.1, 0.3, 0.3, 0.3], "areaFrac": 0.09, "score": 0.88 }
+      }
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "_label": "FIXTURE — deterministic mock scale OCR output, not a real Meta response",
+  "photos": {
+    "fixture:scale-180g": { "rawText": "180 g", "value": 180, "unit": "g", "status": "confirmed" },
+    "fixture:scale-612g": { "rawText": "612 g", "value": 612, "unit": "g", "status": "confirmed" },
+    "fixture:scale-lb-oz": { "rawText": "1 lb 4.2 oz", "value": 1, "unit": "lb_oz", "secondary": { "value": 4.2, "unit": "oz" } }
+  }
+}

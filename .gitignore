@@ -11,3 +11,4 @@ build/
 .claude/verify-ok
 CLAUDE.local.md
 .work/
+.cache/
