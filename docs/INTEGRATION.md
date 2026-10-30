@@ -502,6 +502,7 @@ Spark vision call with an OCR-only prompt.
   in proportion to their range middles; source `scale-distributed`,
   confidence `medium` (**Default**). A single item gets the full weight,
   source `scale-confirmed`, confidence `high`.
+  Server field: POST /api/scale-confirm accepts mode whole-meal to distribute over 2+ items; omit it to anchor a single item.
 
 **Failure / fallback:** unreadable display or call failure →
 `status: "unreadable"`; the user types grams (source `user-entered`, `high`).
