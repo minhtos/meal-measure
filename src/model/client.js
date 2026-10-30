@@ -95,10 +95,12 @@ export async function sparkChat(prompt, photo, opts = {}) {
 }
 
 // SAM 3.1: /responses (not chat/completions), text prompt + input_image.
+// metadata values are strings; include_confidence adds ;c=<0..1> to box and mask tokens.
 export async function samRespond(prompt, photo, opts = {}) {
   const env = opts.env ?? process.env;
   const r = await post('/responses', {
     model: env.META_SAM_MODEL || SAM_MODEL,
+    metadata: { include_confidence: 'true' },
     input: [{ role: 'user', content: [{ type: 'input_text', text: prompt }, { type: 'input_image', image_url: photo.dataUrl }] }],
   }, opts);
   const text = r.json?.output?.[0]?.content?.[0]?.text;

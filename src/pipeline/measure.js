@@ -3,7 +3,8 @@
 // plausibility warnings. Entries are plain objects; every mutator returns a copy.
 import { randomUUID } from 'node:crypto';
 import { identifyFood } from '../model/spark.js';
-import { segmentItems } from '../model/sam.js';
+import { segmentItems, refineWithPoints } from '../model/sam.js';
+import { ModelCallError } from '../model/client.js';
 import { getMode } from '../model/mock.js';
 import { computeNutrients, rangeMiddle, NUTRIENT_KEYS } from '../nutrition/nutrients.js';
 import { hasUsdaKey, searchFoods } from '../nutrition/usda.js';
@@ -204,6 +205,34 @@ export function applyAnchor(entry, itemId, grams, source) {
   setPortion(item, grams, grams, source, 'high'); // overrides the photo estimate (kept in photoEstimate)
   price(item);
   return next;
+}
+
+// ---- tap refinement ----
+// A user tap {x, y, label} (normalised 0..1; label 1 include, 0 exclude) on an item. The
+// item's earlier taps ride along (item.maskPoints), and SAM gets them all as one point
+// prompt. On ANY failure (mock mode, transport error, no mask, undecodable mask) the entry
+// comes back with the previous mask untouched plus a 'mask-refine-failed' warning.
+export async function refineMask(entry, itemId, tap, opts = {}) {
+  const next = structuredClone(entry);
+  const item = find(next, itemId);
+  const points = [...(item.maskPoints ?? []), { x: tap.x, y: tap.y, label: tap.label }];
+  next.warnings = next.warnings.filter((w) => w.code !== 'mask-refine-failed' || w.itemId !== itemId);
+  const fail = (reason) => {
+    next.warnings.push({ code: 'mask-refine-failed', itemId, reason, message: `Could not refine the outline for ${item.food.name}; kept the previous one.` });
+    return next;
+  };
+  try {
+    const r = await refineWithPoints(entry.photoRef, { points }, opts);
+    next.provenance.calls.push(r.provenance);
+    if (r.mask?.maskStatus !== 'decoded') return fail(r.mask ? 'mask_not_decoded' : r.reason);
+    item.mask = r.mask;
+    item.maskReason = null;
+    item.portion.mask = 'decoded';
+    item.maskPoints = points;
+    return next;
+  } catch (err) {
+    return fail(err instanceof ModelCallError ? err.kind : 'error');
+  }
 }
 
 // ---- scale reading gate ----

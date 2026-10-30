@@ -375,6 +375,34 @@ Segments arrive as text: `<|box;x1;y1;x2;y2;w;h|><|mask;x=..;y=..;data=<H>,<W>,<
   (decode only); lossless is checked as in the reference. Golden tests: pho-meal005 dish =
   197880 raster bytes / 63415 foreground; tacos-meal004 dish = 461384 / 110599.
 
+**Confidence, object ids, point/box prompts (SAM 3.1 `/v1/responses`, from the official
+docs read Oct 30; the id wire position is not yet confirmed against a live response).**
+- **Confidence:** every SAM call sends `metadata: {"include_confidence": "true"}` (metadata
+  values are strings). Box and mask tokens then carry `;c=<0..1>`; on a mask token `c` sits
+  between `y` and `data` (`<|mask;x=0;y=0;c=0.87;data=...|>`). Token fields are parsed **by
+  key**, never by position. Adapter output: `mask.confidence` (the mask token's `c`, else the
+  box's, else `null`) and `items[].confidence`; a response without `c` works unchanged.
+- **Object ids:** response records carry integer object ids (stable within a response, may
+  be sparse). `parseSegments` reads the integer (after an optional `<Nf>` frame marker)
+  before each box token; `segmentsById` keys segments by it (no ids → 1-based position).
+  Single-object picks take the lowest id; `mask.objectId` and provenance `objectIds`
+  record which ids came back.
+- **Point/box prompts** (`refineWithPoints(photoRef, {points, boxes})`): written in the
+  `input_text` part as `<0f>1` (frame 0, object id 1) followed by tokens:
+  `<|box;x1=..;y1=..;x2=..;y2=..;w=W;h=H|>` and `<|point;x=..;y=..;w=W;h=H|>`; a leading
+  `-` makes a point **negative** (only points can be). Rules: at most one box per object per
+  frame; `x2`/`y2` inclusive; `w`/`h` on every token are the pixel size of the image
+  **actually sent** (EXIF stripped, ≤1536 long edge); never send mask tokens as prompts.
+  Inputs are normalised 0–1 (`label` 1 include / 0 exclude; box `[x1, y1, x2, y2]`) and
+  converted to clamped integer pixels.
+- **one_bit:** box/point-prompt responses always return `one_bit` masks (marker `!`). The
+  codec decodes one_bit but had no real one_bit data until this path; treat any
+  `box_decode_failed` here as a codec finding, not an API fault.
+- **`pipeline.refineMask(entry, itemId, {x, y, label})`** sends the item's earlier taps plus
+  the new one as one point prompt (object 1) and replaces the mask only if it decodes. On
+  ANY failure (mock mode, transport error, empty reply, undecodable mask) the previous mask
+  is kept and a `mask-refine-failed` warning (`itemId`, `reason`) is added.
+
 **Coarse-to-fine prompting**
 1. **B1 dish pass:** one box prompt covering the central 90 % of the image plus
    a centre point. Pick the highest-score mask with `areaFrac` 0.10–0.95 as
