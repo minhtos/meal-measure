@@ -27,7 +27,9 @@ function redecode(mask, size) {
   );
 }
 
-// -> { spark, sam, photoPath, size, scale } ; scale is null when the sample has no scale photo.
+// -> { spark, sam, photoPath, size, scale, recorded } ; scale is null when the sample has no scale photo.
+// recorded: the nutrients the original live run computed (pipeline-nutrients.json), or null when
+// that run did not save them.
 export function loadSampleRuns(id) {
   if (!isSample(id)) throw new Error(`unknown sample "${id}"`);
   const photoPath = samplePhotoPath(id);
@@ -39,5 +41,6 @@ export function loadSampleRuns(id) {
     return { ...it, mask, maskStatus: mask ? mask.maskStatus : 'none', maskReason: mask ? null : (it.maskReason ?? 'not_found') };
   });
   const scale = existsSync(new URL(`${id}/scale-ocr.json`, ROOT)) ? readJson(id, 'scale-ocr.json') : null;
-  return { spark, sam, photoPath, size, scale };
+  const recorded = existsSync(new URL(`${id}/pipeline-nutrients.json`, ROOT)) ? readJson(id, 'pipeline-nutrients.json') : null;
+  return { spark, sam, photoPath, size, scale, recorded };
 }

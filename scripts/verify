@@ -29,7 +29,10 @@ for section in 'Contract A' 'Contract B' 'Contract C' 'Module boundary' 'Smoke t
 done
 echo "verify: docs/INTEGRATION.md ok"
 
-# 3. Unit / smoke tests (node:test), once any test files exist.
+# 3. web/benchmark.json is regenerated from BENCHMARK.md (fails if the document's own numbers disagree).
+node "$ROOT/scripts/build-benchmark.mjs" || fail "scripts/build-benchmark.mjs"
+
+# 4. Unit / smoke tests (node:test), once any test files exist.
 if [ -d "$ROOT/tests" ] && [ -n "$(find "$ROOT/tests" -name '*.test.js' -print -quit)" ]; then
   node --test "$ROOT/tests/**/*.test.js" || fail "node --test"
   echo "verify: node --test ok"

@@ -9,6 +9,11 @@ pre-approved by Minh.
   App surface: `server.mjs` (node:http) serves `web/` (no framework, no build) and a JSON
   API over the pipeline; `src/app/` holds its view / sample-replay / day-log helpers.
   Web code reaches the pipeline through `/api` only (tested).
+  Mock mode replays what recorded live runs computed (`data/samples/<id>/pipeline-nutrients.json`,
+  written by `scripts/record-sample.mjs` when a USDA key is set); an item with no recorded nutrients
+  shows "not computed in the recorded run" and is left out of a mock log. Never price mock items
+  against the test fixtures. `web/benchmark.json` is generated from `BENCHMARK.md` by
+  `scripts/build-benchmark.mjs` (verify re-runs it).
 - Package manager: none (zero installs). Adding any dependency needs Minh's approval.
 - Verify: `./scripts/verify`
 - Design source of truth: `docs/INTEGRATION.md`

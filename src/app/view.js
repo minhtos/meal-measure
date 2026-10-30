@@ -28,10 +28,13 @@ function itemView(i) {
     mask: maskView(i.mask, i.portion.mask),
     maskReason: i.maskReason ?? null,
     nutrients: i.nutrients,
-    nutrientSource: i.nutrientSource ? { db: i.nutrientSource.db, id: i.nutrientSource.id } : null,
+    nutrientSource: i.nutrientSource ? { db: i.nutrientSource.db, id: i.nutrientSource.id, dataType: i.nutrientSource.dataType ?? null } : null,
+    originalNutrientSource: i.provenance?.originalNutrientSource ? { db: i.provenance.originalNutrientSource.db, id: i.provenance.originalNutrientSource.id } : null,
+    notComputedInRecordedRun: i.notComputedInRecordedRun ?? false,
+    maskPoints: i.maskPoints ?? [],
     nearMiss: i.nearMiss ?? false,
     nearMissReasons: i.nearMissReasons ?? [],
-    matchCandidates: (i.matchCandidates ?? []).map((c) => ({ candidateId: c.candidateId, name: c.name, db: c.db, dataType: c.dataType, score: c.score })),
+    matchCandidates: (i.matchCandidates ?? []).map((c) => ({ candidateId: c.candidateId, name: c.name, db: c.db, dataType: c.dataType, score: c.score, kcalPer100g: c.per100g?.kcal ?? null })),
   };
 }
 

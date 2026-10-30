@@ -22,7 +22,7 @@ export const isDay = (s) => typeof s === 'string' && DAY.test(s);
 
 // Per-item tags shown next to each logged item.
 const SOURCE_TAG = { 'photo-estimate': 'estimate', 'user-entered': 'entered grams', 'scale-confirmed': 'scale (verified)' };
-const FOOD_TAG = { spark: 'identified from photo', 'user-corrected': 'corrected' };
+const FOOD_TAG = { spark: 'identified from photo', 'user-corrected': 'corrected', barcode: 'scanned barcode' };
 
 function entryView(e) {
   const items = e.items.map((i) => ({
@@ -51,6 +51,7 @@ export function createDayLog(file = null) {
       if (file) writeFileSync(file, JSON.stringify(rows));
       return entryView(logged);
     },
+    rows: () => rows,
     view(day = localDay()) {
       const entries = rows.filter((r) => r.day === day).map((r) => entryView(r.entry));
       return { day, entries, totals: sumNutrients(entries.flatMap((e) => e.items)) };

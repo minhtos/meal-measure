@@ -48,6 +48,8 @@ export function toGrams(value, unit, secondary = null) {
   return Math.round(grams * 10) / 10;
 }
 
+const toGramsOrNull = (value, unit) => { try { return toGrams(value, unit); } catch { return null; } };
+
 // ---- food resolution + nutrient pricing ----
 // opts (all optional): env, fetchImpl (one injectable transport for the model
 // calls and USDA/OFF lookups), cacheDir (USDA cache), barcodes ({itemId: code}).
@@ -93,6 +95,7 @@ async function applyFood(item, name, opts = {}, { barcode = null, warnings = [],
   if (!('originalNutrientSource' in item.provenance)) item.provenance.originalNutrientSource = item.nutrientSource; // the auto pick, kept for good
   item.nearMissReasons = userDecided ? [] : nearMissReasons(item.matchCandidates, item.food.identificationConfidence);
   item.nearMiss = item.nearMissReasons.length > 0;
+  delete item.notComputedInRecordedRun;
   price(item);
 }
 
@@ -164,6 +167,74 @@ export async function entryFromRuns(photoRef, spark, sam, opts = {}) {
   };
 }
 
+// A packaged food from its barcode: one item, nutrients from the label data (OFF local, USDA
+// branded), grams entered by the user. Returns { status, ... }: 'matched' carries the entry.
+export async function entryFromBarcode(code, grams, opts = {}) {
+  const r = await resolveUpc(code, { env: opts.env, fetch: opts.fetchImpl, dataDir: opts.dataDir });
+  if (r.status !== 'matched') return r;
+  if (!NUTRIENT_KEYS.every((k) => typeof r.per100g[k] === 'number')) return { status: 'incomplete', code, product: r.product };
+  const off = r.source === 'off-local';
+  const brand = r.product.brands ? ` (${r.product.brands})` : '';
+  const name = `${r.product.name}${brand}`;
+  const nutrientSource = { db: off ? 'off' : 'usda-fdc', id: String(r.product.id), dataType: off ? 'off-product' : 'Branded', fetchedAt: null };
+  const out = { status: 'matched', code, product: { ...r.product, displayName: name }, per100g: r.per100g, servingGrams: r.grams };
+  if (!(typeof grams === 'number' && grams > 0)) return out;
+  const item = {
+    itemId: 'b1',
+    food: { name, source: 'barcode', identificationConfidence: 'confirmed', originalModelName: null },
+    alternatives: [],
+    corrected: false,
+    portion: { grams: null, loggedGrams: null, source: null, confidence: 'none', mask: 'none', photoEstimate: null },
+    mask: null,
+    maskReason: 'no_photo',
+    per100g: r.per100g,
+    nutrientSource,
+    matchCandidates: [],
+    nearMiss: false,
+    nearMissReasons: [],
+    provenance: { originalNutrientSource: nutrientSource },
+  };
+  setPortion(item, grams, grams, 'user-entered', 'high');
+  price(item);
+  out.entry = {
+    photoRef: `barcode:${code}`,
+    items: [item],
+    context: { container: { type: 'package', confidence: 1 }, brandMarks: [] },
+    scale: null,
+    warnings: [],
+    provenance: { calls: [], strippedNutrientFields: false },
+  };
+  return out;
+}
+
+// ---- recorded runs: nutrients captured with the live run, replayed in mock mode ----
+// What a live run produced for each item (candidates, source, per-100g, nutrients), as plain JSON
+// for data/samples/<id>/pipeline-nutrients.json.
+export function recordedNutrients(entry) {
+  return {
+    items: Object.fromEntries(entry.items.map((i) => [i.itemId, {
+      matchCandidates: i.matchCandidates, per100g: i.per100g, nutrientSource: i.nutrientSource, nutrients: i.nutrients,
+      nearMiss: i.nearMiss, nearMissReasons: i.nearMissReasons,
+    }])),
+  };
+}
+
+// Replaces whatever the mock fixtures computed with the recorded run's own numbers. An item the
+// recording has no nutrients for is marked, not priced: nothing here is ever made up.
+export function replayRecordedNutrients(entry, recorded) {
+  const next = structuredClone(entry);
+  for (const item of next.items) {
+    const r = recorded?.items?.[item.itemId];
+    if (r?.nutrients && r.per100g) {
+      Object.assign(item, { matchCandidates: r.matchCandidates ?? [], per100g: r.per100g, nutrientSource: r.nutrientSource, nutrients: r.nutrients, nearMiss: r.nearMiss ?? false, nearMissReasons: r.nearMissReasons ?? [] });
+    } else {
+      Object.assign(item, { matchCandidates: [], per100g: null, nutrientSource: null, nutrients: null, nearMiss: false, nearMissReasons: [], notComputedInRecordedRun: true });
+    }
+    item.provenance.originalNutrientSource = item.nutrientSource;
+  }
+  return next;
+}
+
 // ---- corrections and anchors ----
 export async function applyCorrection(entry, itemId, correctedFoodName, opts = {}) {
   const next = structuredClone(entry);
@@ -190,6 +261,7 @@ export function selectMatchCandidate(entry, itemId, candidateId) {
   item.nutrientSource = sourceOf(pick);
   item.nearMissReasons = [];
   item.nearMiss = false;
+  delete item.notComputedInRecordedRun;
   price(item);
   return next;
 }
@@ -214,14 +286,14 @@ export function applyAnchor(entry, itemId, grams, source) {
 }
 
 // ---- tap refinement ----
-// A user tap {x, y, label} (normalised 0..1; label 1 include, 0 exclude) on an item. The
-// item's earlier taps ride along (item.maskPoints), and SAM gets them all as one point
+// A user tap {x, y, label} (normalised 0..1; label 1 include, 0 exclude), or an array of them, on
+// an item. The item's earlier taps ride along (item.maskPoints), and SAM gets them all as one point
 // prompt. On ANY failure (mock mode, transport error, no mask, undecodable mask) the entry
 // comes back with the previous mask untouched plus a 'mask-refine-failed' warning.
 export async function refineMask(entry, itemId, tap, opts = {}) {
   const next = structuredClone(entry);
   const item = find(next, itemId);
-  const points = [...(item.maskPoints ?? []), { x: tap.x, y: tap.y, label: tap.label }];
+  const points = [...(item.maskPoints ?? []), ...[tap].flat().map((t) => ({ x: t.x, y: t.y, label: t.label }))];
   next.warnings = next.warnings.filter((w) => w.code !== 'mask-refine-failed' || w.itemId !== itemId);
   const fail = (reason) => {
     next.warnings.push({ code: 'mask-refine-failed', itemId, reason, message: `Could not refine the outline for ${item.food.name}; kept the previous one.` });
@@ -275,10 +347,21 @@ export function confirmScale(entry, reading, edits = {}) {
       : null;
     if (grams < 0.75 * lo || grams > 1.33 * hi) {
       decision = 'pending'; // explicit user choice required; never auto-picked
+      // The oz/g mix-up is the documented hazard: say so when the other unit would fit the photo.
+      const inRange = (g) => g >= 0.75 * lo && g <= 1.33 * hi;
+      const otherUnit = unit === 'g' ? toGramsOrNull(value, 'oz') : unit === 'oz' ? toGramsOrNull(value, 'g') : null;
+      const reasoning = [
+        `The scale reads ${grams} g; the photo range for ${covered.length === 1 ? covered[0].food.name : 'these items'} is ${lo}–${hi} g.`,
+        tareHint,
+        otherUnit !== null && inRange(otherUnit) ? `Read as ${unit === 'g' ? 'ounces' : 'grams'} instead, ${value} would be ${otherUnit} g, which fits the photo range. Check the unit on the display.` : null,
+      ].filter(Boolean);
       next.warnings.push({
         code: 'scale-divergence',
         message: `Scale: ${grams} g. Photo estimate: ${lo}–${hi} g. These diverge more than expected.`,
         tareHint,
+        scaleGrams: grams,
+        photoRange: { low: lo, high: hi },
+        reasoning,
         options: ['use-scale', 'use-photo', 'enter-grams'],
       });
     } else if (tareHint) {
@@ -309,7 +392,7 @@ export function logEntry(entry, { now = new Date() } = {}) {
   if (!entry.items.length) throw new IncompleteEntryError('nothing identified: add an item first');
   for (const i of entry.items) {
     if (!i.portion.grams) throw new IncompleteEntryError(`${i.food.name}: needs a portion`);
-    if (!i.nutrients) throw new IncompleteEntryError(`${i.food.name}: no food-database match`);
+    if (!i.nutrients) throw new IncompleteEntryError(`${i.food.name}: ${i.notComputedInRecordedRun ? 'not computed in the recorded run' : 'no food-database match'}`);
   }
   return {
     entryId: randomUUID(),

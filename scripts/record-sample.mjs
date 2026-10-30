@@ -8,6 +8,8 @@ import { identifyFood } from '../src/model/spark.js';
 import { segmentItems } from '../src/model/sam.js';
 import { readScale } from '../src/model/scaleOcr.js';
 import { loadPhoto, SPARK_MODEL, SAM_MODEL } from '../src/model/client.js';
+import { entryFromRuns, recordedNutrients } from '../src/pipeline/measure.js';
+import { hasUsdaKey } from '../src/nutrition/usda.js';
 
 const [id, photoPath, ...flags] = process.argv.slice(2);
 if (!id || !photoPath) {
@@ -31,6 +33,13 @@ const spark = await identifyFood(photoPath);
 write('spark.json', spark);
 const sam = await segmentItems(photoPath, spark.items);
 write('sam-segment.json', sam);
+// The nutrients this run computes (USDA, by code) are kept so mock mode can replay them. Without a
+// USDA key the pipeline would price against the test fixtures, so nothing is written in that case.
+if (hasUsdaKey(process.env)) {
+  write('pipeline-nutrients.json', { recordedAt: new Date().toISOString(), mode: 'live', ...recordedNutrients(await entryFromRuns(photoPath, spark, sam)) });
+} else {
+  console.error('record-sample: USDA_API_KEY not in env; pipeline-nutrients.json NOT written (mock logging stays unavailable)');
+}
 const calls = [spark.provenance, ...sam.provenance.calls];
 if (flags.includes('--scale')) {
   const scale = await readScale(photoPath);

@@ -1,0 +1,105 @@
+{
+  "source": "BENCHMARK.md",
+  "note": "Scores measure identification + portion error against database-computed truth. The totals below are food weight from a kitchen scale; nutrient truth uses the same database entries as the estimates, so database error is not part of the score.",
+  "meals": [
+    {
+      "id": "001",
+      "label": "Phở bò, home",
+      "date": "Oct 27",
+      "truthG": 849,
+      "estimateG": 755,
+      "errorPct": -11.1,
+      "errorLabel": "−11%",
+      "inRange": true
+    },
+    {
+      "id": "002",
+      "label": "Bánh cuốn, home",
+      "date": "Oct 28",
+      "truthG": 323,
+      "estimateG": 328,
+      "errorPct": 1.5,
+      "errorLabel": "+1.5%",
+      "inRange": true
+    },
+    {
+      "id": "003",
+      "label": "Phở bò, component-weighed",
+      "date": "Oct 28",
+      "truthG": 882,
+      "estimateG": 608,
+      "errorPct": -31.1,
+      "errorLabel": "−31%",
+      "inRange": false
+    },
+    {
+      "id": "004",
+      "label": "Tacos de trompo, restaurant",
+      "date": "Oct 29",
+      "truthG": 278,
+      "estimateG": 333,
+      "errorPct": 19.8,
+      "errorLabel": "+20%",
+      "inRange": true
+    },
+    {
+      "id": "005",
+      "label": "Phở bò, component-weighed",
+      "date": "Oct 29",
+      "truthG": 846,
+      "estimateG": 355,
+      "errorPct": -58,
+      "errorLabel": "−58%",
+      "inRange": false
+    }
+  ],
+  "tally": {
+    "n": 5,
+    "medianAbsErrorPct": 19.8,
+    "within20": 3,
+    "inRange": 3
+  },
+  "scaleDisplay": {
+    "summary": "In meals 003 and 005 a scale display was visible in the test photo, showing ounces. The vision model read the display as grams (\"60.81 oz\" → \"608.1\", \"59.54 oz\" → \"595.4\") and anchored its estimate to the misread number — in 005 it additionally subtracted an assumed container weight. In meal 004 it read the display but rejected the value as implausible and estimated visually. Three photos, three different behaviors.",
+    "ab": {
+      "meal": "005",
+      "estimateG": 870,
+      "truthG": 846,
+      "errorLabel": "+2.8%",
+      "inRange": true,
+      "swingG": 515,
+      "withDisplayEstimateG": 355
+    },
+    "appRunReading": {
+      "read": "595.4 g",
+      "display": "59.54 oz",
+      "note": "Left unconfirmed by the gate; it could not be logged."
+    }
+  },
+  "appVariant": {
+    "when": "Oct 30",
+    "runs": [
+      {
+        "meal": "004",
+        "what": "tacos",
+        "appTotalG": 312,
+        "truthG": 278,
+        "errorLabel": "+12%",
+        "photoOnlyErrorLabel": "+20%"
+      },
+      {
+        "meal": "005",
+        "what": "pho, scale visible in frame",
+        "appTotalG": 630,
+        "truthG": 846,
+        "errorLabel": "-26%",
+        "photoOnlyErrorLabel": "−58%"
+      }
+    ]
+  },
+  "samNotes": [
+    "SAM 3.1 grounding (scored separately): dish-level and unit-level prompts ground reliably (\"the bowl\" 3/3 meals, \"the tacos\" → exactly 3 segments).",
+    "Filling-level prompts inside a bowl (\"the meatballs\", specific dish items) returned no segments in most attempts.",
+    "Prompts are kept to the simplest noun form first; items without a mask remain fully loggable (mask-less is a supported state)."
+  ]
+}

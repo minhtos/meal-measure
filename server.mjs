@@ -14,9 +14,11 @@ import { getMode } from './src/model/mock.js';
 import { loadPhoto } from './src/model/client.js';
 import { readScale } from './src/model/scaleOcr.js';
 import {
-  buildEntry, entryFromRuns, applyAnchor, attachScaleReading, logEntry,
+  buildEntry, entryFromRuns, entryFromBarcode, replayRecordedNutrients, applyAnchor, applyCorrection, selectMatchCandidate,
+  refineMask, attachScaleReading, confirmScale, resolveScaleDecision, logEntry,
   UnconfirmedScaleReadingError, ScaleDecisionPendingError, IncompleteEntryError,
 } from './src/pipeline/measure.js';
+import { quickMeals, relogQuickMeal } from './src/app/quickMeals.js';
 import { SAMPLES, DEFAULT_SAMPLE, isSample, loadSampleRuns, samplePhotoPath } from './src/app/samples.js';
 import { entryView } from './src/app/view.js';
 import { createDayLog, isDay, localDay } from './src/app/dayLog.js';
@@ -57,7 +59,7 @@ function decodeImage(image) {
 
 // env: the environment the pipeline sees. dayLogFile: JSON path or null (memory only).
 // fetchImpl: transport override for the model / database calls (tests stub it).
-export function createApp({ env = process.env, dayLogFile = null, fetchImpl } = {}) {
+export function createApp({ env = process.env, dayLogFile = null, fetchImpl, offDataDir } = {}) {
   const sessions = new Map(); // sessionId -> { entry, mock, sample, tmpDir }
   const dayLog = createDayLog(dayLogFile);
   const serverMode = () => getMode(env);
@@ -78,6 +80,7 @@ export function createApp({ env = process.env, dayLogFile = null, fetchImpl } = 
     if (!s) throw new HttpError(404, 'unknown or expired measure session: measure the photo again');
     return s;
   };
+  const envFor = (s) => (s.mock ? mockEnv : env);
   const meta = (id, s, photo) => ({
     sessionId: id,
     mock: s.mock,
@@ -97,7 +100,8 @@ export function createApp({ env = process.env, dayLogFile = null, fetchImpl } = 
       if (mock) {
         const id = isSample(body.sample) ? body.sample : DEFAULT_SAMPLE;
         const runs = loadSampleRuns(id);
-        const entry = await entryFromRuns(id, runs.spark, runs.sam, { env: mockEnv });
+        // Mock replays what the recorded live run computed; it never re-prices against the fixtures.
+        const entry = replayRecordedNutrients(await entryFromRuns(id, runs.spark, runs.sam, { env: mockEnv }), runs.recorded);
         const photo = { url: `/samples/${id}/photo.jpg`, width: runs.size[0], height: runs.size[1] };
         const s = { entry, mock: true, sample: id, photo, scaleAvailable: Boolean(runs.scale) };
         return entryView(entry, meta(remember(s), s));
@@ -138,6 +142,7 @@ export function createApp({ env = process.env, dayLogFile = null, fetchImpl } = 
       }
       const out = { reading: { ...reading, confirmed: false }, mock: Boolean(reading.provenance?.mockLabel) };
       if (s) {
+        s.reading = reading; // the OCR original, so an edited confirmation can be compared to it
         s.entry = attachScaleReading(s.entry, reading);
         out.entry = entryView(s.entry, meta(body.sessionId, s));
       }
@@ -159,9 +164,15 @@ export function createApp({ env = process.env, dayLogFile = null, fetchImpl } = 
     'POST /api/log': async (req) => {
       const body = await readBody(req);
       const s = session(body.sessionId);
+      // A recorded item the original run never priced is left out of a mock log, with the reason.
+      const excluded = s.entry.items.filter((i) => i.notComputedInRecordedRun)
+        .map((i) => ({ itemId: i.itemId, name: i.food.name, reason: 'not computed in the recorded run' }));
+      if (excluded.length === s.entry.items.length) {
+        throw new HttpError(409, 'Nothing to log: every item is not computed in the recorded run. Correct an item to price it, or measure live.');
+      }
       let logged;
       try {
-        logged = logEntry(s.entry);
+        logged = logEntry({ ...s.entry, items: s.entry.items.filter((i) => !i.notComputedInRecordedRun) });
       } catch (err) {
         if (err instanceof UnconfirmedScaleReadingError || err instanceof ScaleDecisionPendingError || err instanceof IncompleteEntryError) {
           throw new HttpError(409, err.message);
@@ -169,7 +180,122 @@ export function createApp({ env = process.env, dayLogFile = null, fetchImpl } = 
         throw err;
       }
       const day = isDay(body.day) ? body.day : localDay();
-      return { entry: dayLog.add(logged, day), day: dayLog.view(day) };
+      return { entry: dayLog.add(logged, day), day: dayLog.view(day), excluded };
+    },
+
+    // ---- correction sheet ----
+    // Typed / alternative rename and/or gram edit; same portion, repriced from the new food.
+    'POST /api/correct': async (req) => {
+      const body = await readBody(req);
+      const s = session(body.sessionId);
+      if (body.name === undefined && body.grams === undefined) throw new HttpError(400, 'send a food name and/or grams');
+      try {
+        if (body.name !== undefined) {
+          const name = String(body.name).trim();
+          if (!name) throw new HttpError(400, 'food name is empty');
+          s.entry = await applyCorrection(s.entry, body.itemId, name, { env: envFor(s), fetchImpl });
+        }
+        if (body.grams !== undefined) s.entry = applyAnchor(s.entry, body.itemId, Number(body.grams), 'user-entered');
+      } catch (err) {
+        throw err instanceof HttpError ? err : new HttpError(400, err.message);
+      }
+      return entryView(s.entry, meta(body.sessionId, s));
+    },
+
+    'POST /api/select-candidate': async (req) => {
+      const body = await readBody(req);
+      const s = session(body.sessionId);
+      try {
+        s.entry = selectMatchCandidate(s.entry, body.itemId, body.candidateId);
+      } catch (err) {
+        throw new HttpError(400, err.message);
+      }
+      return entryView(s.entry, meta(body.sessionId, s));
+    },
+
+    // Include / exclude taps on the photo. A failed refine keeps the previous outline: the item
+    // is unchanged, `refine.ok` is false, and the entry carries a mask-refine-failed warning.
+    'POST /api/refine': async (req) => {
+      const body = await readBody(req);
+      const s = session(body.sessionId);
+      const points = Array.isArray(body.points) ? body.points : [body];
+      const valid = points.length > 0 && points.length <= 10 && points.every((p) =>
+        p && p.x >= 0 && p.x <= 1 && p.y >= 0 && p.y <= 1 && (p.label === 0 || p.label === 1));
+      if (!valid) throw new HttpError(400, 'points must be 1-10 taps: {x, y} in 0..1 and label 1 (include) or 0 (exclude)');
+      if (!s.entry.items.some((i) => i.itemId === body.itemId)) throw new HttpError(400, `no item ${body.itemId}`);
+      s.entry = await refineMask(s.entry, body.itemId, points, { env: envFor(s), fetchImpl });
+      const failed = s.entry.warnings.find((w) => w.code === 'mask-refine-failed' && w.itemId === body.itemId);
+      return { ...entryView(s.entry, meta(body.sessionId, s)), refine: { ok: !failed, reason: failed?.reason ?? null } };
+    },
+
+    // ---- scale confirmation ----
+    // Step 1 (no decision): the user's value + unit (the OCR text or their edit) and the one item the
+    // scale weighed. Step 2 (decision): only when the scale and the photo diverged and the user chose.
+    'POST /api/scale-confirm': async (req) => {
+      const body = await readBody(req);
+      const s = session(body.sessionId);
+      const sc = s.entry.scale;
+      if (!sc || sc.status === 'unreadable') throw new HttpError(409, 'there is no scale reading to confirm');
+      try {
+        if (body.decision !== undefined) {
+          if (sc.status !== 'confirmed' || sc.decision !== 'pending') throw new HttpError(409, 'no scale decision is pending');
+          s.entry = resolveScaleDecision(s.entry, body.decision);
+          if (body.decision === 'use-scale') s.entry = applyAnchor(s.entry, sc.itemIds[0], sc.grams, 'scale-confirmed');
+        } else {
+          if (sc.status === 'confirmed' && sc.decision !== 'pending') throw new HttpError(409, 'this scale reading is already confirmed');
+          const itemId = body.itemId ?? (s.entry.items.length === 1 ? s.entry.items[0].itemId : null);
+          if (!s.entry.items.some((i) => i.itemId === itemId)) throw new HttpError(400, 'say which item was on the scale');
+          const edits = { itemIds: [itemId] };
+          if (body.value !== undefined) edits.value = Number(body.value);
+          if (body.unit !== undefined) edits.unit = body.unit;
+          if (body.secondary !== undefined) edits.secondary = body.secondary;
+          s.entry = confirmScale(s.entry, s.reading ?? sc, edits);
+          if (s.entry.scale.decision === 'not-required') s.entry = applyAnchor(s.entry, itemId, s.entry.scale.grams, 'scale-confirmed');
+        }
+      } catch (err) {
+        throw err instanceof HttpError ? err : new HttpError(400, err.message);
+      }
+      return entryView(s.entry, meta(body.sessionId, s));
+    },
+
+    // ---- barcode ----
+    // Without grams: the product + per-100 g label data. With grams: a loggable session as well.
+    // Mock mode never reaches the network; the local Open Food Facts import answers offline.
+    'POST /api/barcode': async (req) => {
+      const body = await readBody(req);
+      const code = String(body.code ?? '').trim();
+      if (!/^\d{6,14}$/.test(code)) throw new HttpError(400, 'a barcode is 6 to 14 digits');
+      const grams = body.grams === undefined ? undefined : Number(body.grams);
+      if (grams !== undefined && !(grams > 0)) throw new HttpError(400, 'grams must be a positive number');
+      const lookupEnv = serverMode() === 'mock' ? { ...env, USDA_API_KEY: '' } : env;
+      let r;
+      try {
+        r = await entryFromBarcode(code, grams, { env: lookupEnv, fetchImpl, dataDir: offDataDir });
+      } catch (err) {
+        if (err.code !== 'ENOENT') throw err;
+        // data/off-us.* is a local, gitignored import: a fresh checkout has none until scripts/import-off.mjs runs.
+        return { status: 'unavailable', code, reason: 'The local product data is not installed. Run scripts/import-off.mjs to import it.' };
+      }
+      if (r.status !== 'matched') return { status: r.status, code, reason: r.reason ?? null };
+      const out = { status: 'matched', code, name: r.product.displayName, per100g: r.per100g, servingGrams: r.servingGrams };
+      if (r.entry) {
+        const s = { entry: r.entry, mock: false, photo: null };
+        const id = remember(s);
+        out.sessionId = id;
+        out.entry = entryView(r.entry, meta(id, s));
+      }
+      return out;
+    },
+
+    // ---- quick meals: logged meals that carry a stored correction / entered grams ----
+    'GET /api/quick-meals': async () => ({ meals: quickMeals(dayLog.rows()) }),
+
+    'POST /api/quick-meals/log': async (req) => {
+      const body = await readBody(req);
+      const entry = relogQuickMeal(dayLog.rows(), body.quickId);
+      if (!entry) throw new HttpError(404, 'unknown quick meal');
+      const day = isDay(body.day) ? body.day : localDay();
+      return { entry: dayLog.add(entry, day), day: dayLog.view(day) };
     },
 
     'GET /api/day': async (req, url) => {
