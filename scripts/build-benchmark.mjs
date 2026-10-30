@@ -66,5 +66,13 @@ const out = {
   appVariant: { when: 'Oct 30', runs: variant },
   samNotes,
 };
+// Merge the live nutrient scoring (written by scripts/score-nutrients.mjs) when it exists; verify does not need it.
+let merged = '';
+try {
+  out.nutrientScoring = JSON.parse(readFileSync(new URL('../web/nutrient-scoring.json', import.meta.url), 'utf8'));
+  merged = ' + nutrient scoring';
+} catch (e) {
+  if (e.code !== 'ENOENT') throw e;
+}
 writeFileSync(new URL('../web/benchmark.json', import.meta.url), `${JSON.stringify(out, null, 2)}\n`);
-console.log(`benchmark: ${meals.length} meals, ${variant.length} app-variant runs -> web/benchmark.json`);
+console.log(`benchmark: ${meals.length} meals, ${variant.length} app-variant runs${merged} -> web/benchmark.json`);
