@@ -1,0 +1,33 @@
+#!/bin/bash
+# Project verification gate. Exit non-zero on ANY failure. On success the
+# .claude/verify-ok marker is refreshed — the require-verify hook blocks
+# `git commit` / `gh pr create` whenever a source file is newer than it.
+# Stages (format → lint → typecheck → unit tests → build) run only when this
+# project has them; a zero-dependency Node scaffold has no formatter, linter,
+# typechecker, or build yet.
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+MARKER="$ROOT/.claude/verify-ok"
+rm -f "$MARKER"
+
+fail() { echo "verify: FAIL — $*" >&2; exit 1; }
+
+# ---- STAGES ----
+# 1. Project metadata parses.
+node -e 'JSON.parse(require("fs").readFileSync(process.argv[1], "utf8"))' "$ROOT/.project.json" \
+  || fail ".project.json is not valid JSON"
+echo "verify: .project.json ok"
+
+# 2. Unit / smoke tests (node:test), once any test files exist.
+if [ -d "$ROOT/test" ] && [ -n "$(find "$ROOT/test" -name '*.test.js' -print -quit)" ]; then
+  node --test "$ROOT/test/**/*.test.js" || fail "node --test"
+  echo "verify: node --test ok"
+else
+  echo "verify: no test files yet — unit test stage skipped"
+fi
+# ---- END STAGES ----
+
+mkdir -p "$(dirname "$MARKER")"
+touch "$MARKER"
+echo "verify: all stages passed"

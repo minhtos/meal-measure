@@ -1,0 +1,15 @@
+{
+  "conventions": {
+    "build": "",
+    "format": "",
+    "languages": ["javascript"],
+    "lint": "",
+    "packageManager": "none",
+    "runtime": "node 22 (ESM, zero dependencies)",
+    "test": "./scripts/verify",
+    "unitTests": "node --test",
+    "typecheck": ""
+  },
+  "preferences": { "autonomy": "gate-all", "tdd": "pragmatic" },
+  "version": 1
+}
