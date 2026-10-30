@@ -1,0 +1,39 @@
+{
+  "provenance": "Hand-weighed by the author during assembly, Oct 28-29 2026; each component weight is the difference between successive cumulative scale readings. The meal-003 meatball/broth split reflects the author's same-evening correction. Transcribed from the author's benchmark records (Pengu) into the repo on 2026-10-30. Grams.",
+  "meals": {
+    "003": {
+      "dish": "pho",
+      "truth": {
+        "totalG": 882,
+        "components": { "broth": 377, "onion-herbs": 28, "rice-noodles": 257, "beef-meatballs": 93, "beef-cuts": 127 }
+      },
+      "variants": {
+        "estimate-photo": {
+          "totalG": 608,
+          "components": { "broth": 270, "onion-herbs": 28, "rice-noodles": 150, "beef-meatballs": 100, "beef-cuts": 60 }
+        }
+      }
+    },
+    "005": {
+      "dish": "pho",
+      "truth": {
+        "totalG": 846,
+        "components": { "broth": 336, "rice-noodles": 261, "raw-beef-slices": 80, "cooked-beef": 72, "beef-meatballs": 46, "garnish-sprouts-onion-herbs": 51 }
+      },
+      "variants": {
+        "estimate-photo-scale-visible": {
+          "totalG": 355,
+          "components": { "broth": 140, "rice-noodles": 100, "raw-beef-slices": 35, "cooked-beef": 20, "beef-meatballs": 45, "garnish": 15 }
+        },
+        "estimate-photo-scale-cropped-AB": {
+          "totalG": 870,
+          "components": { "broth": 450, "rice-noodles": 180, "raw-beef-slices": 70, "cooked-beef": 60, "beef-meatballs": 75, "garnish": 35 }
+        },
+        "app-pipeline-run": {
+          "totalG": 630,
+          "source": "data/samples/pho-meal005/spark.json (per-item likely grams, in-repo)"
+        }
+      }
+    }
+  }
+}

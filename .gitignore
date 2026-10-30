@@ -16,3 +16,4 @@ CLAUDE.local.md
 data/*
 !data/samples/
 !data/samples/**
+!data/benchmark-components.json
