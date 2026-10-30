@@ -1,0 +1,39 @@
+{
+  "recordedAt": "2026-10-30T19:05:57.220Z",
+  "photo": "data/samples/tacos-meal004/photo.jpg",
+  "sentSize": [
+    768,
+    1024
+  ],
+  "inputSha256": "5bfcfd33c8a8da612a0fa4e67e448d55a03596639b69c851d45f609aab2e802c",
+  "point": {
+    "x": 0.45,
+    "y": 0.45,
+    "label": 1
+  },
+  "outcome": "ok",
+  "prompt": "<0f>1<|point;x=346;y=461;w=768;h=1024|>",
+  "requestId": "f9dc74fb-85ec-4a63-82dc-10f43ab7d5fe",
+  "segmentsFound": 1,
+  "objectIds": [
+    1
+  ],
+  "maskStatus": "decoded",
+  "maskError": null,
+  "confidence": 0.94921875,
+  "objectId": 1,
+  "encoding": "lossless",
+  "raster": {
+    "width": 73,
+    "height": 259,
+    "foreground": 10082,
+    "encoding": "lossless"
+  },
+  "bbox": [
+    0.41015625,
+    0.2724609375,
+    0.09505208333333333,
+    0.2529296875
+  ],
+  "areaFrac": 0.012819925944010416
+}
