@@ -19,7 +19,17 @@ node -e 'JSON.parse(require("fs").readFileSync(process.argv[1], "utf8"))' "$ROOT
   || fail ".project.json is not valid JSON"
 echo "verify: .project.json ok"
 
-# 2. Unit / smoke tests (node:test), once any test files exist.
+# 2. Integration design doc exists, is non-empty, and states the core rule.
+DOC="$ROOT/docs/INTEGRATION.md"
+[ -s "$DOC" ] || fail "docs/INTEGRATION.md missing or empty"
+grep -q 'The model never calculates nutrient numbers\.' "$DOC" \
+  || fail "docs/INTEGRATION.md lacks the 'The model never calculates nutrient numbers.' statement"
+for section in 'Contract A' 'Contract B' 'Contract C' 'Module boundary' 'Smoke tests'; do
+  grep -q "^## .*$section" "$DOC" || fail "docs/INTEGRATION.md lacks a '$section' section"
+done
+echo "verify: docs/INTEGRATION.md ok"
+
+# 3. Unit / smoke tests (node:test), once any test files exist.
 if [ -d "$ROOT/test" ] && [ -n "$(find "$ROOT/test" -name '*.test.js' -print -quit)" ]; then
   node --test "$ROOT/test/**/*.test.js" || fail "node --test"
   echo "verify: node --test ok"
