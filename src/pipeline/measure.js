@@ -285,6 +285,37 @@ export function applyAnchor(entry, itemId, grams, source) {
   return next;
 }
 
+// A confirmed scale total over 2+ items (INTEGRATION.md section 8): split in proportion to each item's
+// photo-range middle, source 'scale-distributed', confidence medium. Shares are whole grams, like every
+// logged portion (largest remainder), so they add up to the confirmed total rounded to a gram. Same gates as a scale anchor:
+// confirmed, and no pending divergence (the user decides that first, nothing is applied meanwhile).
+export function applyScaleDistribution(entry) {
+  const s = entry.scale;
+  if (s?.status !== 'confirmed') throw new UnconfirmedScaleReadingError();
+  if (s.decision === 'pending') throw new ScaleDecisionPendingError();
+  if (s.decision !== 'not-required' && s.decision !== 'use-scale') throw new Error(`scale decision is "${s.decision}"; not applying the scale`);
+  if (s.itemIds.length < 2) throw new Error('distribution needs 2+ items; a single item is anchored instead');
+  const next = structuredClone(entry);
+  const items = s.itemIds.map((id) => find(next, id));
+  const mids = items.map((i) => {
+    const est = i.portion.photoEstimate;
+    if (!est) throw new Error(`${i.food.name} has no photo estimate to distribute by; enter its grams instead`);
+    return rangeMiddle(est.low, est.high);
+  });
+  const total = Math.round(s.grams);
+  const midSum = mids.reduce((a, b) => a + b, 0);
+  const exact = mids.map((m) => (total * m) / midSum);
+  const shares = exact.map(Math.floor);
+  const left = total - shares.reduce((a, b) => a + b, 0);
+  exact.map((x, k) => [x - shares[k], k]).sort((a, b) => b[0] - a[0]).slice(0, left).forEach(([, k]) => { shares[k] += 1; });
+  items.forEach((item, k) => {
+    const g = shares[k];
+    setPortion(item, g, g, 'scale-distributed', 'medium'); // photo range stays in photoEstimate
+    price(item);
+  });
+  return next;
+}
+
 // ---- tap refinement ----
 // A user tap {x, y, label} (normalised 0..1; label 1 include, 0 exclude), or an array of them, on
 // an item. The item's earlier taps ride along (item.maskPoints), and SAM gets them all as one point

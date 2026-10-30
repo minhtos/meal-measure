@@ -225,6 +225,10 @@ main { padding: 8px clamp(16px, 4vw, 40px) 64px; max-width: 1240px; margin: 0 au
 .scale-form { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; }
 .scale-form label { display: grid; gap: 4px; font-size: 0.8rem; color: var(--muted); }
 .scale-form input[type="number"] { width: 8em; }
+.scale-mode { flex-basis: 100%; border: 0; padding: 0; margin: 0; display: grid; gap: 6px; }
+.scale-mode legend { font-size: 0.8rem; color: var(--muted); padding: 0; margin-bottom: 4px; }
+.scale-form label.check { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: inherit; }
+.scale-form label.check input { width: auto; }
 .compare { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; margin: 12px 0; }
 .cmp { display: grid; gap: 2px; padding: 12px 14px; border-radius: var(--r-inner); background: var(--soft); }
 .cmp strong { font-size: 1.3rem; font-variant-numeric: tabular-nums; }

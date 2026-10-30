@@ -9,9 +9,12 @@ import { registerResultPanel } from './measure.js';
 const UNITS = [['g', 'grams (g)'], ['oz', 'ounces (oz)'], ['kg', 'kilograms (kg)'], ['lb', 'pounds (lb)'], ['lb_oz', 'pounds + ounces']];
 const drafts = new Map(); // sessionId -> { value, unit, secondary, itemId } while the user is editing
 
-function readingForm(result, update, { submitLabel, lockedItemId = null, onDone }) {
+// lockedItemId: re-editing a one-item reading; lockedWhole: re-editing a whole-meal one. With 2+ items
+// and neither, the form asks: whole-meal total (spread by the photo estimates) or anchor one item.
+function readingForm(result, update, { submitLabel, lockedItemId = null, lockedWhole = false, onDone }) {
   const s = result.scale;
-  const draft = drafts.get(result.sessionId) ?? { value: String(s.value ?? ''), unit: s.unit ?? '', secondary: s.secondary?.value != null ? String(s.secondary.value) : '', itemId: lockedItemId ?? (result.items.length === 1 ? result.items[0].itemId : '') };
+  const multi = result.items.length > 1 && !lockedItemId && !lockedWhole;
+  const draft = drafts.get(result.sessionId) ?? { value: String(s.value ?? ''), unit: s.unit ?? '', secondary: s.secondary?.value != null ? String(s.secondary.value) : '', itemId: lockedItemId ?? (result.items.length === 1 ? result.items[0].itemId : ''), mode: 'whole-meal' };
   drafts.set(result.sessionId, draft);
 
   const value = el('input', { type: 'number', inputmode: 'decimal', step: 'any', min: '0', value: draft.value, 'aria-label': 'Value on the display' });
@@ -25,28 +28,41 @@ function readingForm(result, update, { submitLabel, lockedItemId = null, onDone 
   const secLabel = el('label', {}, 'Ounces', secondary);
   const err = el('p', { class: 'err', role: 'alert', hidden: true });
   const submit = el('button', { class: 'btn primary small', type: 'submit' });
+  const radio = (v, checked) => el('input', { type: 'radio', name: `scale-mode-${result.sessionId}`, value: v, checked });
+  const whole = radio('whole-meal', draft.mode !== 'one-item');
+  const one = radio('one-item', draft.mode === 'one-item');
+  const itemLabel = el('label', {}, 'Which item was on the scale?', itemPick);
+  const mode = () => (one.checked ? 'one-item' : 'whole-meal');
+  const wholeMeal = () => lockedWhole || (multi && mode() === 'whole-meal');
 
   const changed = () => String(value.value) !== String(s.value ?? '') || unit.value !== (s.unit ?? '');
   const refresh = () => {
-    Object.assign(draft, { value: value.value, unit: unit.value, secondary: secondary.value, itemId: itemPick.value || draft.itemId });
+    Object.assign(draft, { value: value.value, unit: unit.value, secondary: secondary.value, itemId: itemPick.value || draft.itemId, mode: mode() });
     secLabel.hidden = unit.value !== 'lb_oz';
+    itemLabel.hidden = !(multi && mode() === 'one-item');
     submit.textContent = changed() ? 'Edit and confirm' : submitLabel;
-    submit.disabled = !(Number(value.value) > 0) || !unit.value || (!lockedItemId && !itemPick.value);
+    submit.disabled = !(Number(value.value) > 0) || !unit.value || (!wholeMeal() && !lockedItemId && !itemPick.value);
   };
-  [value, unit, secondary, itemPick].forEach((n) => n.addEventListener('input', refresh));
+  [value, unit, secondary, itemPick, whole, one].forEach((n) => n.addEventListener('input', refresh));
 
   const form = el('form', { class: 'scale-form' },
     el('label', {}, 'Value', value),
     el('label', {}, 'Unit on the display', unit),
     secLabel,
-    lockedItemId || result.items.length === 1 ? null : el('label', {}, 'Which item was on the scale?', itemPick),
+    multi ? el('fieldset', { class: 'scale-mode' },
+      el('legend', {}, 'What was on the scale?'),
+      el('label', { class: 'check' }, whole, ` The whole meal: split this total across all ${result.items.length} items by their photo estimates`),
+      el('label', { class: 'check' }, one, ' One item: anchor just that item')) : null,
+    multi ? itemLabel : null,
     submit, err);
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     submit.disabled = true;
     err.hidden = true;
     try {
-      const body = { value: Number(value.value), unit: unit.value, itemId: lockedItemId ?? (itemPick.value || draft.itemId) };
+      const body = { value: Number(value.value), unit: unit.value };
+      if (wholeMeal()) body.mode = 'whole-meal';
+      else body.itemId = lockedItemId ?? (itemPick.value || draft.itemId);
       if (unit.value === 'lb_oz') body.secondary = { value: Number(secondary.value || 0), unit: 'oz' };
       const r = await api.scaleConfirm(result.sessionId, body);
       drafts.delete(result.sessionId);
@@ -78,6 +94,7 @@ function divergencePanel(result, update) {
   const s = result.scale;
   const w = result.warnings.find((x) => x.code === 'scale-divergence');
   const itemId = s.itemIds[0];
+  const wholeMeal = s.itemIds.length > 1;
   const item = result.items.find((i) => i.itemId === itemId);
   const choose = (decision) => async (e) => {
     const btns = e.currentTarget.parentElement.querySelectorAll('button');
@@ -86,20 +103,21 @@ function divergencePanel(result, update) {
   };
   const msg = el('p', { class: 'err', role: 'alert', hidden: true });
   const photo = w?.photoRange ?? item?.photoEstimate;
+  const useLabel = wholeMeal ? 'Use the scale value (split across items)' : 'Use the scale value';
   return el('section', { class: 'panel scale-panel', 'aria-label': 'Scale and photo disagree' },
     el('h2', {}, 'The scale and the photo disagree'),
-    el('p', { class: 'muted' }, `For ${item?.name ?? 'the item'}. Pick the one you trust; nothing is chosen for you.`),
+    el('p', { class: 'muted' }, `For ${wholeMeal ? 'the whole meal' : item?.name ?? 'the item'}. Pick the one you trust; nothing is chosen for you.`),
     el('div', { class: 'compare' },
       el('div', { class: 'cmp' }, el('span', { class: 'k' }, 'Scale reading (confirmed)'), el('strong', {}, `${num(s.grams)} g`), el('small', {}, `${s.value} ${s.unit}${s.edited ? ', edited by you' : ''}`)),
       el('div', { class: 'cmp' }, el('span', { class: 'k' }, 'Photo estimate'), el('strong', {}, photo ? `${num(photo.low)}–${num(photo.high)} g` : 'none'), el('small', {}, 'range from the photo alone'))),
     el('ul', { class: 'why' }, ...(w?.reasoning ?? [w?.message].filter(Boolean)).map((r) => el('li', {}, r))),
     el('div', { class: 'row' },
-      el('button', { class: 'btn small primary', type: 'button', onclick: choose('use-scale') }, 'Use the scale value'),
+      el('button', { class: 'btn small primary', type: 'button', onclick: choose('use-scale') }, useLabel),
       el('button', { class: 'btn small', type: 'button', onclick: choose('use-photo') }, 'Keep the photo estimate'),
       el('button', { class: 'btn small', type: 'button', onclick: choose('enter-grams') }, 'I’ll enter grams')),
     msg,
     el('details', { class: 'fix' }, el('summary', {}, 'The reading is wrong? Edit it'),
-      readingForm(result, update, { submitLabel: 'Confirm again', lockedItemId: itemId })),
+      readingForm(result, update, { submitLabel: 'Confirm again', lockedItemId: wholeMeal ? null : itemId, lockedWhole: wholeMeal })),
   );
 }
 

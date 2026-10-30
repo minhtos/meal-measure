@@ -187,6 +187,45 @@ test('scale-confirm: needs a reading, an item, a real unit; a plausible total an
   } finally { await app.close(); }
 });
 
+test('scale-confirm: whole-meal total is distributed over the items; divergence waits; single anchor unchanged', async () => {
+  const app = await start();
+  try {
+    const sum = (xs) => xs.reduce((a, b) => a + b, 0);
+    const a = await phoWithReading(app);
+    const first = await app.post('/api/scale-confirm', { sessionId: a.sid, mode: 'whole-meal', value: 1, unit: 'g' });
+    assert.equal(first.body.scale.decision, 'pending', 'a 1 g total diverges from the photo');
+    assert.ok(first.body.scale.itemIds.length >= 2);
+    assert.ok(first.body.items.every((i) => i.portionSource === 'photo-estimate'), 'nothing distributed yet');
+    assert.equal((await app.post('/api/log', { sessionId: a.sid })).status, 409);
+
+    const mids = first.body.items.map((i) => Math.round((i.photoEstimate.low + i.photoEstimate.high) / 2));
+    const total = Math.round(sum(mids) * 1.05);
+    const fixed = await app.post('/api/scale-confirm', { sessionId: a.sid, mode: 'whole-meal', value: total, unit: 'g' });
+    assert.equal(fixed.body.scale.decision, 'not-required');
+    fixed.body.items.forEach((i, k) => {
+      assert.equal(i.portionSource, 'scale-distributed');
+      assert.equal(i.portionConfidence, 'medium');
+      assert.equal(i.grams.low, i.grams.high, 'range bar narrowed');
+      assert.ok(Math.abs(i.grams.likely - (total * mids[k]) / sum(mids)) < 1);
+    });
+    assert.equal(sum(fixed.body.items.map((i) => i.grams.likely)), total);
+
+    // divergence then "use the scale value" distributes
+    const b = await phoWithReading(app);
+    const d = await app.post('/api/scale-confirm', { sessionId: b.sid, mode: 'whole-meal', value: 5000, unit: 'g' });
+    assert.equal(d.body.scale.decision, 'pending');
+    const used = await app.post('/api/scale-confirm', { sessionId: b.sid, decision: 'use-scale' });
+    assert.ok(used.body.items.every((i) => i.portionSource === 'scale-distributed'));
+    assert.equal(sum(used.body.items.map((i) => i.grams.likely)), 5000);
+
+    // the one-item path is as before
+    const c = await phoWithReading(app);
+    const one = await app.post('/api/scale-confirm', { sessionId: c.sid, itemId: c.it.itemId, value: c.it.grams.likely, unit: 'g' });
+    assert.equal(item(one.body, c.it.itemId).portionSource, 'scale-confirmed');
+    assert.ok(one.body.items.filter((i) => i.itemId !== c.it.itemId).every((i) => i.portionSource === 'photo-estimate'));
+  } finally { await app.close(); }
+});
+
 test('scale-confirm: divergence shows both values with reasoning and waits for the user', async () => {
   const app = await start();
   try {

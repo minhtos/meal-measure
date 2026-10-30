@@ -15,7 +15,7 @@ import { loadPhoto } from './src/model/client.js';
 import { readScale } from './src/model/scaleOcr.js';
 import {
   buildEntry, entryFromRuns, entryFromBarcode, replayRecordedNutrients, applyAnchor, applyCorrection, selectMatchCandidate,
-  refineMask, attachScaleReading, confirmScale, resolveScaleDecision, logEntry,
+  refineMask, applyScaleDistribution, attachScaleReading, confirmScale, resolveScaleDecision, logEntry,
   UnconfirmedScaleReadingError, ScaleDecisionPendingError, IncompleteEntryError,
 } from './src/pipeline/measure.js';
 import { quickMeals, relogQuickMeal } from './src/app/quickMeals.js';
@@ -36,6 +36,11 @@ const MOCK_LABEL = 'mock data — recorded sample run';
 class HttpError extends Error {
   constructor(status, message) { super(message); this.status = status; }
 }
+
+// Applies a confirmed, decided scale reading: one covered item is anchored, 2+ are distributed.
+const applyScale = (entry) => (entry.scale.itemIds.length > 1
+  ? applyScaleDistribution(entry)
+  : applyAnchor(entry, entry.scale.itemIds[0], entry.scale.grams, 'scale-confirmed'));
 
 async function readBody(req) {
   const chunks = [];
@@ -240,17 +245,18 @@ export function createApp({ env = process.env, dayLogFile = null, fetchImpl, off
         if (body.decision !== undefined) {
           if (sc.status !== 'confirmed' || sc.decision !== 'pending') throw new HttpError(409, 'no scale decision is pending');
           s.entry = resolveScaleDecision(s.entry, body.decision);
-          if (body.decision === 'use-scale') s.entry = applyAnchor(s.entry, sc.itemIds[0], sc.grams, 'scale-confirmed');
+          if (body.decision === 'use-scale') s.entry = applyScale(s.entry);
         } else {
           if (sc.status === 'confirmed' && sc.decision !== 'pending') throw new HttpError(409, 'this scale reading is already confirmed');
+          const wholeMeal = body.mode === 'whole-meal' && s.entry.items.length > 1;
           const itemId = body.itemId ?? (s.entry.items.length === 1 ? s.entry.items[0].itemId : null);
-          if (!s.entry.items.some((i) => i.itemId === itemId)) throw new HttpError(400, 'say which item was on the scale');
-          const edits = { itemIds: [itemId] };
+          if (!wholeMeal && !s.entry.items.some((i) => i.itemId === itemId)) throw new HttpError(400, 'say which item was on the scale, or apply it as the whole-meal total');
+          const edits = { itemIds: wholeMeal ? s.entry.items.map((i) => i.itemId) : [itemId] };
           if (body.value !== undefined) edits.value = Number(body.value);
           if (body.unit !== undefined) edits.unit = body.unit;
           if (body.secondary !== undefined) edits.secondary = body.secondary;
           s.entry = confirmScale(s.entry, s.reading ?? sc, edits);
-          if (s.entry.scale.decision === 'not-required') s.entry = applyAnchor(s.entry, itemId, s.entry.scale.grams, 'scale-confirmed');
+          if (s.entry.scale.decision === 'not-required') s.entry = applyScale(s.entry);
         }
       } catch (err) {
         throw err instanceof HttpError ? err : new HttpError(400, err.message);
