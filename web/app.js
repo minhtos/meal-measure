@@ -1,11 +1,15 @@
 // Hash router + shared state. Each screen is mount(root, ctx) -> optional cleanup, registered in
-// `screens`; part-2 screens (correction sheet, scale confirm, benchmark) plug in here or through
+// `screens`. The correction sheet and the scale-confirm panel plug into the measure screen through
 // the hooks exported by screens/measure.js.
 import { api } from './api.js';
 import { mountCapture } from './screens/capture.js';
 import { mountMeasure } from './screens/measure.js';
 import { mountDayLog } from './screens/dayLog.js';
-import { mountPlaceholder } from './screens/placeholder.js';
+import { mountBarcode } from './screens/barcode.js';
+import { mountQuick } from './screens/quick.js';
+import { mountBenchmark } from './screens/benchmark.js';
+import './screens/correction.js'; // registers the correction sheet on the measure screen
+import './screens/scaleConfirm.js'; // registers the scale-confirm panel
 
 const view = document.getElementById('view');
 const chip = document.getElementById('mock-chip');
@@ -23,8 +27,9 @@ const screens = {
   capture: mountCapture,
   measure: mountMeasure,
   log: mountDayLog,
-  barcode: (root) => mountPlaceholder(root, ctx, { title: 'Barcode', body: 'Scan or type a barcode to measure a packaged food from its label data. This arrives in the next update; for now, measure from a photo.' }),
-  quick: (root) => mountPlaceholder(root, ctx, { title: 'Quick meals', body: 'Log a meal you repeat without a photo. This arrives in the next update; for now, measure from a photo.' }),
+  barcode: mountBarcode,
+  quick: mountQuick,
+  benchmark: mountBenchmark,
 };
 
 let cleanup = null;
@@ -33,7 +38,7 @@ async function route() {
   const mount = screens[name] ?? screens.capture;
   cleanup?.();
   view.replaceChildren();
-  document.querySelectorAll('.tabs a').forEach((a) => a.toggleAttribute('aria-current', a.dataset.tab === (name === 'log' ? 'log' : 'capture')));
+  document.querySelectorAll('.tabs a').forEach((a) => a.toggleAttribute('aria-current', a.dataset.tab === (['log', 'benchmark'].includes(name) ? name : 'capture')));
   ctx.showMock(ctx.config.mode === 'mock' || Boolean(name === 'measure' && ctx.result?.mock));
   cleanup = (await mount(view, ctx)) ?? null;
   view.focus({ preventScroll: true });

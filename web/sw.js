@@ -1,6 +1,8 @@
 // Offline shell: network first, falling back to the last cached copy. /api is never cached.
-const CACHE = 'meal-measure-shell-v1';
-const SHELL = ['/', '/style.css', '/app.js', '/api.js', '/image.js', '/util.js', '/icon.svg', '/screens/capture.js', '/screens/measure.js', '/screens/dayLog.js', '/screens/placeholder.js'];
+const CACHE = 'meal-measure-shell-v2';
+const SHELL = ['/', '/style.css', '/app.js', '/api.js', '/image.js', '/util.js', '/icon.svg', '/benchmark.json',
+  '/screens/capture.js', '/screens/measure.js', '/screens/dayLog.js', '/screens/correction.js', '/screens/scaleConfirm.js',
+  '/screens/barcode.js', '/screens/quick.js', '/screens/benchmark.js'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));

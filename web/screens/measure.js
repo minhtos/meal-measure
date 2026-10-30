@@ -5,7 +5,8 @@
 // Part-2 plug-ins:
 //   registerItemAction(({ item, ctx, update }) => Node|null)   extra controls inside each item row
 //   registerResultPanel(({ result, ctx, update }) => Node|null) extra panels under the list
-//     (scale-confirm flow). Both re-run on every update(result).
+//     (scale-confirm flow). Both re-run on every update(result). The correction sheet and the
+//     scale-confirm panel plug in from screens/correction.js and screens/scaleConfirm.js.
 import { api } from '../api.js';
 import { el, svgEl, num, rangeText, gramsText, today, NUTRIENTS } from '../util.js';
 
@@ -91,7 +92,7 @@ function buildRow(item, index, ctx, update) {
     }
     nutr.replaceChildren(...(it.nutrients
       ? NUTRIENTS.map(([k, text, unit]) => el('span', {}, `${text} ${rangeText(it.nutrients[k], unit)}`))
-      : [el('span', { class: 'muted' }, 'No food-database match yet: correct the food to price it.')]));
+      : [el('span', { class: 'muted' }, it.notComputedInRecordedRun ? 'Not computed in the recorded run.' : 'No food-database match yet: correct the food to price it.')]));
     actions.replaceChildren(...itemActions.map((fn) => fn({ item: it, ctx, update })).filter(Boolean));
     labelName.textContent = it.name;
     labelRange.textContent = g ? (g.low === g.high ? ` ${num(g.low)} g` : ` ${rangeText(g)} g`) : '';
@@ -113,12 +114,19 @@ function buildStage(result, photoUrl) {
   const labels = el('div', { class: 'labels' });
   const stage = el('figure', { class: 'stage', style: `--ar:${width}/${height}` }, img, overlay, labels);
 
-  result.items.forEach((item, i) => {
+  // Adds or updates one item's outline (a refined mask replaces the path in place).
+  const setMask = (item, i) => {
     if (!item.mask) return;
-    const p = svgEl('path', { d: item.mask.path, 'fill-rule': 'evenodd', class: item.mask.status === 'decoded' ? 'mask' : 'mask box', 'data-id': item.itemId });
-    p.style.cssText = `--c:${colorOf(i)};--i:${i}`;
-    overlay.append(p);
-  });
+    let p = overlay.querySelector(`[data-id="${item.itemId}"]`);
+    if (!p) {
+      p = svgEl('path', { 'fill-rule': 'evenodd', 'data-id': item.itemId });
+      p.style.cssText = `--c:${colorOf(i)};--i:${i}`;
+      overlay.append(p);
+    }
+    p.setAttribute('d', item.mask.path);
+    p.setAttribute('class', item.mask.status === 'decoded' ? 'mask' : 'mask box');
+  };
+  result.items.forEach(setMask);
 
   // Nudge labels apart (px space, after layout) so every one stays readable.
   const layout = () => {
@@ -136,7 +144,7 @@ function buildStage(result, photoUrl) {
       l.style.top = `${y}px`;
     }
   };
-  return { stage, labels, layout };
+  return { stage, labels, layout, setMask };
 }
 
 function sumTiles(result) {
@@ -148,11 +156,8 @@ function scaleCard(result) {
   const s = result.scale;
   if (!s) return null;
   if (s.status === 'unreadable') return el('section', { class: 'panel note-card' }, el('strong', {}, 'Scale display'), el('p', {}, 'The display could not be read. Enter grams for each item instead.'));
-  if (s.status === 'unconfirmed') {
-    return el('section', { class: 'panel note-card' }, el('strong', {}, 'Scale reading, not verified'),
-      el('p', {}, `Read from the display: ${s.rawText} ${s.unit}. It is not used until you verify it.`));
-  }
-  return el('section', { class: 'panel note-card' }, el('strong', {}, 'Scale reading verified'), el('p', {}, `${num(s.grams)} g`));
+  if (s.status === 'unconfirmed' || s.decision === 'pending') return null; // the scale-confirm panel owns these states
+  return el('section', { class: 'panel note-card' }, el('strong', {}, 'Scale reading verified'), el('p', {}, `${num(s.grams)} g${s.decision === 'use-photo' ? '. You kept the photo estimate.' : s.decision === 'enter-grams' ? '. You chose to enter grams.' : ''}`));
 }
 
 export async function mountMeasure(root, ctx) {
@@ -186,14 +191,16 @@ export async function mountMeasure(root, ctx) {
 
     const refresh = (r) => {
       ctx.result = r;
-      r.items.forEach((it) => rows.find((x) => x.id === it.itemId)?.row.set(it));
+      r.items.forEach((it, i) => { rows.find((x) => x.id === it.itemId)?.row.set(it); stageApi.setMask(it, i); });
+      const unpriced = r.items.filter((it) => it.notComputedInRecordedRun);
       totals.replaceChildren(el('h2', {}, 'Sum of ranges'), sumTiles(r),
         r.unmatched ? el('p', { class: 'muted' }, `${r.unmatched} item${r.unmatched > 1 ? 's' : ''} without a food-database match ${r.unmatched > 1 ? 'are' : 'is'} not in these sums.`) : null);
-      notices.replaceChildren(
+      notices.replaceChildren(...[
+        unpriced.length ? el('p', { class: 'notice' }, `Not computed in the recorded run, so left out of the mock log: ${unpriced.map((it) => it.name).join('; ')}. Correct an item to price it.`) : null,
         ...r.warnings.map((w) => el('p', { class: 'notice' }, w.message)),
         ...r.modelErrors.map((m) => el('p', { class: 'notice' }, `The ${m.call.split('.')[0]} step did not complete (${m.kind}). Try again, or enter items by hand.`)),
-      );
-      extras.replaceChildren(scaleCard(r), ...resultPanels.map((fn) => fn({ result: r, ctx, update: refresh })).filter(Boolean));
+      ].filter(Boolean));
+      extras.replaceChildren(...[scaleCard(r), ...resultPanels.map((fn) => fn({ result: r, ctx, update: refresh }))].filter(Boolean));
     };
 
     rows = result.items.map((item, i) => ({ id: item.itemId, row: buildRow(item, i, ctx, refresh) }));
