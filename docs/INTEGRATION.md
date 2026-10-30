@@ -500,10 +500,20 @@ Defaults (pre-approved frozen scope; chosen without a live answer):
 - Day log stored as one JSON file per day under a local data dir (no server DB).
 - `MEAL_MEASURE_MODE=auto` default; `DEMO_KEY` for USDA when no key is set.
 
-Open points (do not block this design; resolved when the first live call is made):
-- Exact hosted endpoint paths, auth header, and model ids for Spark and SAM
-  in the hackathon API — isolated in `src/model/client.js` and the adapters.
-- Whether hosted SAM returns RLE or polygons — the adapter normalises to RLE.
+Resolved by live testing (Oct 26–29), implemented in `src/model/client.js`:
+- Base `https://api.meta.ai/v1`, `Authorization: Bearer $META_API_KEY`.
+- Spark (`muse-spark-1.3`) and scale OCR: `POST /chat/completions`, image as a data-URL `image_url` part.
+- SAM 3.1 is **not** on chat/completions: `POST /responses`, model `sam-3.1`, text prompt +
+  `input_image`; reply text holds `<|box;x1;y1;x2;y2;w;h|><|mask;x;y;data|>` segments, boxes in
+  input-image pixels. Prompts must be the simplest noun ('the plate', 'the tacos'); descriptive
+  prompts return HTTP 200 with empty text, so empty → simplify and retry once, then `not_found`.
+  This text-prompt flow supersedes the point/box prompts of §7 passes B1–B3.
+- Mask payload is represented by its parsed box (4-point polygon, `maskStatus: 'box'`); see the
+  PR/summary for the decode spike outcome.
+- Spark identification prompts carry the verbatim rule: "Ignore any scale display or numeric
+  readout visible in the photo. Do not use displayed numbers when estimating grams."
+- Samples live in `data/samples/<id>/` (`.gitignore` ignores `data/*` except `data/samples/**`),
+  recorded by `scripts/record-sample.mjs`. In live mode `photoRef` is a JPEG file path.
 
 ## 13. Product copy vocabulary
 

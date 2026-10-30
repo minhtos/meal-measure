@@ -12,4 +12,7 @@ build/
 CLAUDE.local.md
 .work/
 .cache/
-data/
+# data/ is ignored (off-us.* bulk import) EXCEPT recorded samples, which ship in the repo.
+data/*
+!data/samples/
+!data/samples/**

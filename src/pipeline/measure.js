@@ -120,7 +120,7 @@ export async function buildEntry(photoRef) {
     context: spark.context,
     scale: null,
     warnings: [],
-    provenance: { calls: [spark.provenance, sam.provenance], strippedNutrientFields: spark.provenance.strippedNutrientFields },
+    provenance: { calls: [spark.provenance, ...(sam.provenance.calls ?? [sam.provenance])], strippedNutrientFields: spark.provenance.strippedNutrientFields },
   };
 }
 

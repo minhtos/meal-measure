@@ -1,6 +1,5 @@
 // Mode switch + fixture replay shared by the model-call functions.
-// Mock is the default whenever no Meta key is in env; live adapters are not
-// wired yet (docs/INTEGRATION.md §12 open points) and fail loudly, never silently.
+// Mock is the default whenever no Meta key is in env.
 import { readFileSync } from 'node:fs';
 
 const FIXTURE_DIR = new URL('./fixtures/', import.meta.url);
@@ -18,8 +17,4 @@ export function loadFixture(file, photoRef) {
 
 export function mockProvenance(call, label) {
   return { call, mode: 'mock', fixture: true, label };
-}
-
-export function liveNotImplemented(call) {
-  throw new Error(`${call}: live Meta adapter not implemented yet (endpoint paths/models are an open point in docs/INTEGRATION.md §12); set MEAL_MEASURE_MODE=mock`);
 }
