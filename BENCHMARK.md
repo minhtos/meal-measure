@@ -70,7 +70,7 @@ Design consequences, implemented in the pipeline:
   fully loggable (mask-less is a supported state).
 - **Broth entry choice:** in the nutrient scoring, broth resolved to a
   branded entry (FDC 2093746, 4 kcal/100 g), and broth candidates span
-  6–29 kcal/100 g, so broth-heavy meals are sensitive to entry choice.
+  1–29 kcal/100 g, so broth-heavy meals are sensitive to entry choice.
   Truth and estimate share the entry, so the % errors are unaffected, but
   absolute kcal are not.
 - **Database gaps:** USDA has no defensible entry for bánh cuốn; the
@@ -93,7 +93,7 @@ identification prompt, same photos):
   846 g -> -26% (unguarded photo-only was -58%). The blindness rule cut
   the anchoring error by more than half; submersion error remains.
 - The same run's scale OCR read the display as "595.4 g" (the display
-  showed 59.54 oz). The reading stayed  and could not be
+  showed 59.54 oz). The reading stayed unconfirmed and could not be
   logged - the confirmation gate, not the OCR, is what makes scale
   readings safe to use.
 
