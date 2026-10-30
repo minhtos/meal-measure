@@ -15,6 +15,24 @@ Meta API access is bring-your-own-key: set the key in your environment (see
 `docs/INTEGRATION.md` → Configuration). Without a key the app runs in mock mode
 against recorded sample runs.
 
+## Run the app
+
+```bash
+node server.mjs                  # http://127.0.0.1:8787  (PORT, HOST to change)
+```
+
+A dependency-free static PWA (`web/`) served by `server.mjs` (node:http only).
+
+- **Mock vs live.** Mock is the default when `META_API_KEY` is not in the server's
+  environment (or `MEAL_MEASURE_MODE=mock`): the recorded samples (`tacos-meal004`,
+  `pho-meal005`) are replayed through the real pipeline, and the UI shows a `mock data`
+  chip. With a key the server runs the live pipeline; the key stays in the server process
+  and is never sent to the browser. `?mock=1` on `/api/measure` (or the "Try a recorded
+  sample" buttons) forces mock even with a key.
+- **API.** `POST /api/measure`, `/api/scale-ocr`, `/api/anchor`, `/api/log`,
+  `GET /api/day`, `GET /api/config`. The browser only ever talks to these.
+- **Day log** persists to `data/day-log.json` (git-ignored; `MEAL_MEASURE_LOG` overrides).
+
 ## Design
 
 - [`docs/INTEGRATION.md`](docs/INTEGRATION.md) — Meta model-call contracts,

@@ -118,6 +118,12 @@ const find = (entry, itemId) => {
 export async function buildEntry(photoRef, opts = {}) {
   const spark = await identifyFood(photoRef, opts);
   const sam = await segmentItems(photoRef, spark.items, opts);
+  return entryFromRuns(photoRef, spark, sam, opts);
+}
+
+// Joins an already-obtained Spark + SAM result (live, fixture, or a recorded sample run)
+// to the nutrition data. buildEntry is the model-calling wrapper around this.
+export async function entryFromRuns(photoRef, spark, sam, opts = {}) {
   const warnings = [];
   const brands = spark.context.brandMarks.map((b) => b.text.toLowerCase());
 

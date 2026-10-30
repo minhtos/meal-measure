@@ -6,7 +6,9 @@ pre-approved by Minh.
 
 ## Stack
 - Language / runtime: dependency-free Node.js ESM, Node 22; tests via `node:test`.
-  The PWA front end attaches later on top of the same modules.
+  App surface: `server.mjs` (node:http) serves `web/` (no framework, no build) and a JSON
+  API over the pipeline; `src/app/` holds its view / sample-replay / day-log helpers.
+  Web code reaches the pipeline through `/api` only (tested).
 - Package manager: none (zero installs). Adding any dependency needs Minh's approval.
 - Verify: `./scripts/verify`
 - Design source of truth: `docs/INTEGRATION.md`
