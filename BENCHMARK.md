@@ -77,3 +77,17 @@ Design consequences, implemented in the pipeline:
 Photos and weights are the author's own meals, weighed and photographed
 by him during the event window. Per-meal records (photos, scale readings,
 model outputs) are kept with the project records.
+
+## Pipeline variant (Oct 30, live through the app)
+
+First end-to-end live runs of the app pipeline (SAM-first, scale-blind
+identification prompt, same photos):
+- Meal 004 (tacos): app total 312 g vs. truth 278 g -> +12% (photo-only
+  baseline was +20%).
+- Meal 005 (pho, scale visible in frame): app total 630 g vs. truth
+  846 g -> -26% (unguarded photo-only was -58%). The blindness rule cut
+  the anchoring error by more than half; submersion error remains.
+- The same run's scale OCR read the display as "595.4 g" (the display
+  showed 59.54 oz). The reading stayed  and could not be
+  logged - the confirmation gate, not the OCR, is what makes scale
+  readings safe to use.
