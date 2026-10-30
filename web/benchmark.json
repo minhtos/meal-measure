@@ -101,5 +101,198 @@
     "SAM 3.1 grounding (scored separately): dish-level and unit-level prompts ground reliably (\"the bowl\" 3/3 meals, \"the tacos\" → exactly 3 segments).",
     "Filling-level prompts inside a bowl (\"the meatballs\", specific dish items) returned no segments in most attempts.",
     "Prompts are kept to the simplest noun form first; items without a mask remain fully loggable (mask-less is a supported state)."
-  ]
+  ],
+  "nutrientScoring": {
+    "generatedAt": "2026-10-30T19:37:41.299Z",
+    "entries": {
+      "broth": {
+        "query": "beef broth",
+        "fdcId": 2093746,
+        "dataType": "Branded",
+        "name": "BEEF BROTH",
+        "per100g": {
+          "protein": 0.83,
+          "fat": 0,
+          "carbs": 0.42,
+          "kcal": 4
+        }
+      },
+      "rice-noodles": {
+        "query": "rice noodles, cooked",
+        "fdcId": 168914,
+        "dataType": "SR Legacy",
+        "name": "Rice noodles, cooked",
+        "per100g": {
+          "fat": 0.2,
+          "carbs": 24,
+          "kcal": 108,
+          "protein": 1.79
+        }
+      },
+      "raw-beef": {
+        "query": "beef round eye of round raw",
+        "fdcId": 746760,
+        "dataType": "Foundation",
+        "name": "Beef, round, eye of round roast, boneless, separable lean only, trimmed to 0\" fat, select, raw",
+        "per100g": {
+          "protein": 23.4,
+          "fat": 2.48,
+          "carbs": 0,
+          "kcal": 122
+        }
+      },
+      "cooked-beef": {
+        "query": "beef brisket braised",
+        "fdcId": 2705851,
+        "dataType": "Survey (FNDDS)",
+        "name": "Beef, brisket",
+        "per100g": {
+          "protein": 29.41,
+          "fat": 12.04,
+          "carbs": 0,
+          "kcal": 231
+        }
+      },
+      "beef-meatballs": {
+        "query": "beef meatballs",
+        "fdcId": 2626055,
+        "dataType": "Branded",
+        "name": "BEEF MEATBALLS",
+        "per100g": {
+          "protein": 15.8,
+          "fat": 26.3,
+          "carbs": 3.51,
+          "kcal": 316
+        }
+      },
+      "garnish": {
+        "query": "mung beans sprouts raw",
+        "fdcId": 2709768,
+        "dataType": "Survey (FNDDS)",
+        "name": "Bean sprouts, raw",
+        "per100g": {
+          "protein": 3.04,
+          "fat": 0.18,
+          "carbs": 5.94,
+          "kcal": 30
+        }
+      }
+    },
+    "componentEntry": {
+      "broth": "broth",
+      "rice-noodles": "rice-noodles",
+      "raw-beef-slices": "raw-beef",
+      "cooked-beef": "cooked-beef",
+      "beef-cuts": "cooked-beef",
+      "beef-meatballs": "beef-meatballs",
+      "onion-herbs": "garnish",
+      "garnish-sprouts-onion-herbs": "garnish",
+      "garnish": "garnish"
+    },
+    "warnings": [
+      "broth resolved to 2093746 \"BEEF BROTH\", expected SR 171538 or FNDDS 2707132"
+    ],
+    "scores": [
+      {
+        "meal": "003",
+        "variant": "estimate-photo",
+        "note": "",
+        "truthG": 882,
+        "estimateG": 608,
+        "truth": {
+          "kcal": 888.3,
+          "protein": 60.6,
+          "carbs": 68.2,
+          "fat": 40.3
+        },
+        "estimate": {
+          "kcal": 635.8,
+          "protein": 39.2,
+          "carbs": 42.3,
+          "fat": 33.9
+        },
+        "errorPct": {
+          "kcal": -28.4,
+          "protein": -35.3,
+          "carbs": -38,
+          "fat": -16
+        }
+      },
+      {
+        "meal": "005",
+        "variant": "estimate-photo-scale-visible",
+        "note": "",
+        "truthG": 846,
+        "estimateG": 355,
+        "truth": {
+          "kcal": 719.9,
+          "protein": 56.2,
+          "carbs": 68.7,
+          "fat": 23.4
+        },
+        "estimate": {
+          "kcal": 349.2,
+          "protein": 24.6,
+          "carbs": 27.1,
+          "fat": 15.3
+        },
+        "errorPct": {
+          "kcal": -51.5,
+          "protein": -56.2,
+          "carbs": -60.6,
+          "fat": -34.4
+        }
+      },
+      {
+        "meal": "005",
+        "variant": "estimate-photo-scale-cropped-AB",
+        "note": "",
+        "truthG": 846,
+        "estimateG": 870,
+        "truth": {
+          "kcal": 719.9,
+          "protein": 56.2,
+          "carbs": 68.7,
+          "fat": 23.4
+        },
+        "estimate": {
+          "kcal": 683.9,
+          "protein": 53.9,
+          "carbs": 49.8,
+          "fat": 29.1
+        },
+        "errorPct": {
+          "kcal": -5,
+          "protein": -4.1,
+          "carbs": -27.5,
+          "fat": 24.6
+        }
+      },
+      {
+        "meal": "005",
+        "variant": "app-pipeline-run",
+        "note": "Spark likely grams per item, priced with the same entries",
+        "truthG": 846,
+        "estimateG": 630,
+        "truth": {
+          "kcal": 719.9,
+          "protein": 56.2,
+          "carbs": 68.7,
+          "fat": 23.4
+        },
+        "estimate": {
+          "kcal": 552.1,
+          "protein": 42.7,
+          "carbs": 40.8,
+          "fat": 23.8
+        },
+        "errorPct": {
+          "kcal": -23.3,
+          "protein": -24,
+          "carbs": -40.6,
+          "fat": 1.8
+        }
+      }
+    ]
+  }
 }

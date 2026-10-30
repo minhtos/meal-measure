@@ -327,7 +327,9 @@ test('barcode with no local product data reports it instead of failing', async (
 test('benchmark.json parses, is served, and matches BENCHMARK.md', async () => {
   const doc = readFileSync(new URL('../BENCHMARK.md', import.meta.url), 'utf8');
   const b = JSON.parse(readFileSync(new URL('../web/benchmark.json', import.meta.url), 'utf8'));
-  const rows = [...doc.matchAll(/^\|\s*(\d{3})\s*\|/gm)].map((m) => m[1]);
+  // Count only the results table: later sections (e.g. nutrient scoring) repeat meal ids per variant.
+  const results = doc.split(/^## Results\b.*$/m)[1].split(/^## /m)[0];
+  const rows = [...results.matchAll(/^\|\s*(\d{3})\s*\|/gm)].map((m) => m[1]);
   assert.equal(b.meals.length, rows.length);
   assert.deepEqual(b.meals.map((m) => m.id), rows);
   assert.equal(b.tally.n, rows.length);
