@@ -1,0 +1,102 @@
+{
+  "items": [
+    {
+      "itemId": "i1",
+      "regionId": null,
+      "name": "oat ring cereal",
+      "preparation": null,
+      "alternatives": [
+        {
+          "name": "cheerios, plain",
+          "confidence": 0.8
+        },
+        {
+          "name": "honey nut oat cereal",
+          "confidence": 0.15
+        }
+      ],
+      "grams": {
+        "low": 20,
+        "likely": 30,
+        "high": 45
+      },
+      "confidence": 0.85,
+      "bbox": [
+        0.16,
+        0.32,
+        0.71,
+        0.48
+      ]
+    },
+    {
+      "itemId": "i2",
+      "regionId": null,
+      "name": "freeze-dried strawberries",
+      "preparation": null,
+      "alternatives": [
+        {
+          "name": "dried strawberry slices",
+          "confidence": 0.3
+        }
+      ],
+      "grams": {
+        "low": 4,
+        "likely": 6,
+        "high": 9
+      },
+      "confidence": 0.75,
+      "bbox": [
+        0.21,
+        0.33,
+        0.53,
+        0.49
+      ]
+    },
+    {
+      "itemId": "i3",
+      "regionId": null,
+      "name": "cow's milk",
+      "preparation": null,
+      "alternatives": [
+        {
+          "name": "low-fat milk",
+          "confidence": 0.3
+        }
+      ],
+      "grams": {
+        "low": 20,
+        "likely": 40,
+        "high": 70
+      },
+      "confidence": 0.6,
+      "bbox": [
+        0.45,
+        0.5,
+        0.25,
+        0.2
+      ]
+    }
+  ],
+  "context": {
+    "container": {
+      "type": "bowl",
+      "confidence": 0.95
+    },
+    "brandMarks": [],
+    "placeHint": {
+      "text": "",
+      "confidence": 0
+    },
+    "scaleVisible": false
+  },
+  "provenance": {
+    "call": "spark.identify",
+    "mode": "live",
+    "model": "muse-spark-1.3",
+    "requestId": "1747d687-656c-4fb8-8ed9-bae3930e57e9",
+    "inputSha256": "494da44215ff54bd5396e1a4079ed36e7de461f6218dc2dde13b2032182d9986",
+    "at": "2026-10-31T13:04:12.931Z",
+    "latencyMs": 4737,
+    "strippedNutrientFields": false
+  }
+}

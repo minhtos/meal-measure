@@ -1,0 +1,54 @@
+{
+  "recordedAt": "2026-10-31T13:05:32.474Z",
+  "mode": "live",
+  "models": {
+    "spark": "muse-spark-1.3",
+    "sam": "sam-3.1"
+  },
+  "requestIds": [
+    {
+      "call": "spark.identify",
+      "prompt": null,
+      "requestId": "906a6a2b-d78b-49cb-8f4b-52cbf52847a1"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the plate",
+      "requestId": "71d8cf54-6e78-44ad-ae1b-01d71ff329dc"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the bowl",
+      "requestId": "c606f195-2d0d-4a8d-b95a-ada06f2bc2d2"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the oat cereal",
+      "requestId": "75ed8aca-373f-4d1d-ac89-f3f66f6fdd5e"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the dried strawberries",
+      "requestId": "afe5d284-0aa0-46d0-8101-8365519a713d"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the whole milk",
+      "requestId": "182a9318-3589-40aa-816f-80f63d2f3846"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the milk",
+      "requestId": "da0c5708-ad8e-406d-b98b-73773be71274"
+    },
+    {
+      "call": "scale.ocr",
+      "prompt": null,
+      "requestId": "fdd9435d-8bba-4dc7-9dd4-77dcc13a827d"
+    }
+  ],
+  "inputSha256": "c462900e4611b1dee156c575bd4b5f5d49d47ab8274f9e96b636548ab0e204d9",
+  "codeVersion": "d4e7fd81338820bc3250c13d1d562e406a7526be",
+  "recordedBy": "scripts/record-sample.mjs",
+  "errors": []
+}

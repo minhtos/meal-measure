@@ -1,0 +1,49 @@
+{
+  "recordedAt": "2026-10-31T13:04:29.860Z",
+  "mode": "live",
+  "models": {
+    "spark": "muse-spark-1.3",
+    "sam": "sam-3.1"
+  },
+  "requestIds": [
+    {
+      "call": "spark.identify",
+      "prompt": null,
+      "requestId": "1747d687-656c-4fb8-8ed9-bae3930e57e9"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the plate",
+      "requestId": "e17904a2-9013-4188-8353-db87747707c3"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the bowl",
+      "requestId": "d3050bd1-8105-4306-9401-9b90dd638446"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the ring cereal",
+      "requestId": "7c79e5b1-f671-4d8e-9d8c-e5be22484fc5"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the dried strawberries",
+      "requestId": "eec5bb7e-b34c-4a57-9754-050b520cfe15"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the s milk",
+      "requestId": "97c55045-d1c6-4b50-bc77-ab82e2960065"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the milk",
+      "requestId": "1a7034e0-b01d-49b0-aa4b-135309e81e17"
+    }
+  ],
+  "inputSha256": "494da44215ff54bd5396e1a4079ed36e7de461f6218dc2dde13b2032182d9986",
+  "codeVersion": "d4e7fd81338820bc3250c13d1d562e406a7526be",
+  "recordedBy": "scripts/record-sample.mjs",
+  "errors": []
+}

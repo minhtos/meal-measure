@@ -1,0 +1,372 @@
+{
+  "recordedAt": "2026-10-31T13:04:28.342Z",
+  "mode": "live",
+  "items": {
+    "i1": {
+      "matchCandidates": [
+        {
+          "candidateId": "usda-fdc:172989",
+          "db": "usda-fdc",
+          "id": "172989",
+          "name": "Cereals, QUAKER, Quick Oats, Dry",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "protein": 13.7,
+            "fat": 6.87,
+            "carbs": 68.2,
+            "kcal": 371
+          },
+          "score": 0.5,
+          "formConcern": "dry",
+          "fetchedAt": "2026-10-31T13:04:28.928Z"
+        },
+        {
+          "candidateId": "usda-fdc:174626",
+          "db": "usda-fdc",
+          "id": "174626",
+          "name": "Cereals, QUAKER, Oat Bran, QUAKER/MOTHER'S Oat Bran, dry",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "fat": 7.97,
+            "kcal": 364,
+            "carbs": 62.9,
+            "protein": 17
+          },
+          "score": 0.4,
+          "formConcern": "dry",
+          "fetchedAt": "2026-10-31T13:04:28.928Z"
+        },
+        {
+          "candidateId": "usda-fdc:169039",
+          "db": "usda-fdc",
+          "id": "169039",
+          "name": "Cereals ready-to-eat, frosted oat cereal with marshmallows",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "protein": 7.1,
+            "fat": 3.33,
+            "carbs": 84.7,
+            "kcal": 400
+          },
+          "score": 0.364,
+          "formConcern": null,
+          "fetchedAt": "2026-10-31T13:04:28.928Z"
+        },
+        {
+          "candidateId": "usda-fdc:173921",
+          "db": "usda-fdc",
+          "id": "173921",
+          "name": "Cereals ready-to-eat, QUAKER WHOLE HEARTS oat cereal",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "protein": 7.63,
+            "fat": 5.61,
+            "carbs": 80.1,
+            "kcal": 376
+          },
+          "score": 0.364,
+          "formConcern": null,
+          "fetchedAt": "2026-10-31T13:04:28.928Z"
+        },
+        {
+          "candidateId": "usda-fdc:173904",
+          "db": "usda-fdc",
+          "id": "173904",
+          "name": "Cereals, oats, regular and quick, not fortified, dry",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "fat": 6.52,
+            "carbs": 67.7,
+            "kcal": 379,
+            "protein": 13.2
+          },
+          "score": 0.364,
+          "formConcern": "dry",
+          "fetchedAt": "2026-10-31T13:04:28.928Z"
+        }
+      ],
+      "per100g": {
+        "protein": 13.7,
+        "fat": 6.87,
+        "carbs": 68.2,
+        "kcal": 371
+      },
+      "nutrientSource": {
+        "db": "usda-fdc",
+        "id": "172989",
+        "dataType": "SR Legacy",
+        "fetchedAt": "2026-10-31T13:04:28.928Z"
+      },
+      "nutrients": {
+        "kcal": {
+          "low": 74.2,
+          "likely": 122.4,
+          "high": 167
+        },
+        "protein": {
+          "low": 2.7,
+          "likely": 4.5,
+          "high": 6.2
+        },
+        "carbs": {
+          "low": 13.6,
+          "likely": 22.5,
+          "high": 30.7
+        },
+        "fat": {
+          "low": 1.4,
+          "likely": 2.3,
+          "high": 3.1
+        }
+      },
+      "nearMiss": true,
+      "nearMissReasons": [
+        "form-concern"
+      ]
+    },
+    "i2": {
+      "matchCandidates": [
+        {
+          "candidateId": "usda-fdc:170075",
+          "db": "usda-fdc",
+          "id": "170075",
+          "name": "Chives, freeze-dried",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "fat": 3.5,
+            "carbs": 64.3,
+            "kcal": 311,
+            "protein": 21.2
+          },
+          "score": 0.667,
+          "formConcern": null,
+          "fetchedAt": "2026-10-31T13:04:29.362Z"
+        },
+        {
+          "candidateId": "usda-fdc:170486",
+          "db": "usda-fdc",
+          "id": "170486",
+          "name": "Parsley, freeze-dried",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "protein": 31.3,
+            "fat": 5.2,
+            "carbs": 42.4,
+            "kcal": 271
+          },
+          "score": 0.667,
+          "formConcern": null,
+          "fetchedAt": "2026-10-31T13:04:29.362Z"
+        },
+        {
+          "candidateId": "usda-fdc:170082",
+          "db": "usda-fdc",
+          "id": "170082",
+          "name": "Shallots, freeze-dried",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "fat": 0.5,
+            "carbs": 80.7,
+            "kcal": 348,
+            "protein": 12.3
+          },
+          "score": 0.667,
+          "formConcern": null,
+          "fetchedAt": "2026-10-31T13:04:29.362Z"
+        },
+        {
+          "candidateId": "usda-fdc:169373",
+          "db": "usda-fdc",
+          "id": "169373",
+          "name": "Peppers, sweet, red, freeze-dried",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "kcal": 314,
+            "carbs": 68.7,
+            "fat": 3,
+            "protein": 17.9
+          },
+          "score": 0.5,
+          "formConcern": null,
+          "fetchedAt": "2026-10-31T13:04:29.362Z"
+        },
+        {
+          "candidateId": "usda-fdc:170485",
+          "db": "usda-fdc",
+          "id": "170485",
+          "name": "Leeks, (bulb and lower-leaf portion), freeze-dried",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "carbs": 74.6,
+            "kcal": 321,
+            "fat": 2.1,
+            "protein": 15.2
+          },
+          "score": 0.364,
+          "formConcern": null,
+          "fetchedAt": "2026-10-31T13:04:29.362Z"
+        }
+      ],
+      "per100g": {
+        "fat": 3.5,
+        "carbs": 64.3,
+        "kcal": 311,
+        "protein": 21.2
+      },
+      "nutrientSource": {
+        "db": "usda-fdc",
+        "id": "170075",
+        "dataType": "SR Legacy",
+        "fetchedAt": "2026-10-31T13:04:29.362Z"
+      },
+      "nutrients": {
+        "kcal": {
+          "low": 12.4,
+          "likely": 21.8,
+          "high": 28
+        },
+        "protein": {
+          "low": 0.8,
+          "likely": 1.5,
+          "high": 1.9
+        },
+        "carbs": {
+          "low": 2.6,
+          "likely": 4.5,
+          "high": 5.8
+        },
+        "fat": {
+          "low": 0.1,
+          "likely": 0.2,
+          "high": 0.3
+        }
+      },
+      "nearMiss": true,
+      "nearMissReasons": [
+        "close-scores"
+      ]
+    },
+    "i3": {
+      "matchCandidates": [
+        {
+          "candidateId": "usda-fdc:174980",
+          "db": "usda-fdc",
+          "id": "174980",
+          "name": "Crackers, milk",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "protein": 7.6,
+            "fat": 13.8,
+            "carbs": 71.7,
+            "kcal": 446
+          },
+          "score": 0.4,
+          "formConcern": null,
+          "fetchedAt": "2026-10-31T13:04:29.703Z"
+        },
+        {
+          "candidateId": "usda-fdc:167587",
+          "db": "usda-fdc",
+          "id": "167587",
+          "name": "Candies, milk chocolate",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "fat": 29.7,
+            "protein": 7.65,
+            "carbs": 59.4,
+            "kcal": 535
+          },
+          "score": 0.333,
+          "formConcern": null,
+          "fetchedAt": "2026-10-31T13:04:29.703Z"
+        },
+        {
+          "candidateId": "usda-fdc:171942",
+          "db": "usda-fdc",
+          "id": "171942",
+          "name": "Beverages, rice milk, unsweetened",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "protein": 0.28,
+            "fat": 0.97,
+            "carbs": 9.17,
+            "kcal": 47
+          },
+          "score": 0.286,
+          "formConcern": null,
+          "fetchedAt": "2026-10-31T13:04:29.703Z"
+        },
+        {
+          "candidateId": "usda-fdc:167686",
+          "db": "usda-fdc",
+          "id": "167686",
+          "name": "Milk dessert, frozen, milk-fat free, chocolate",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "fat": 1,
+            "carbs": 37.7,
+            "kcal": 167,
+            "protein": 4.3
+          },
+          "score": 0.222,
+          "formConcern": null,
+          "fetchedAt": "2026-10-31T13:04:29.703Z"
+        },
+        {
+          "candidateId": "usda-fdc:173459",
+          "db": "usda-fdc",
+          "id": "173459",
+          "name": "Protein supplement, milk based, Muscle Milk, powder",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "fat": 17.1,
+            "carbs": 18.5,
+            "kcal": 411,
+            "protein": 45.7
+          },
+          "score": 0.222,
+          "formConcern": "powder",
+          "fetchedAt": "2026-10-31T13:04:29.703Z"
+        }
+      ],
+      "per100g": {
+        "protein": 7.6,
+        "fat": 13.8,
+        "carbs": 71.7,
+        "kcal": 446
+      },
+      "nutrientSource": {
+        "db": "usda-fdc",
+        "id": "174980",
+        "dataType": "SR Legacy",
+        "fetchedAt": "2026-10-31T13:04:29.703Z"
+      },
+      "nutrients": {
+        "kcal": {
+          "low": 89.2,
+          "likely": 200.7,
+          "high": 312.2
+        },
+        "protein": {
+          "low": 1.5,
+          "likely": 3.4,
+          "high": 5.3
+        },
+        "carbs": {
+          "low": 14.3,
+          "likely": 32.3,
+          "high": 50.2
+        },
+        "fat": {
+          "low": 2.8,
+          "likely": 6.2,
+          "high": 9.7
+        }
+      },
+      "nearMiss": true,
+      "nearMissReasons": [
+        "low-score"
+      ]
+    }
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "items": [
+    {
+      "itemId": "i1",
+      "regionId": null,
+      "name": "whole grain oat cereal",
+      "preparation": null,
+      "alternatives": [
+        {
+          "name": "cheerios",
+          "confidence": 0.85
+        }
+      ],
+      "grams": {
+        "low": 30,
+        "likely": 45,
+        "high": 60
+      },
+      "confidence": 0.65,
+      "bbox": [
+        0.085,
+        0.44,
+        0.58,
+        0.31
+      ]
+    },
+    {
+      "itemId": "i2",
+      "regionId": null,
+      "name": "freeze dried strawberries",
+      "preparation": "freeze-dried",
+      "alternatives": [
+        {
+          "name": "dried strawberries",
+          "confidence": 0.3
+        }
+      ],
+      "grams": {
+        "low": 4,
+        "likely": 7,
+        "high": 12
+      },
+      "confidence": 0.7,
+      "bbox": [
+        0.14,
+        0.44,
+        0.38,
+        0.31
+      ]
+    },
+    {
+      "itemId": "i3",
+      "regionId": null,
+      "name": "whole milk",
+      "preparation": null,
+      "alternatives": [
+        {
+          "name": "2% milk",
+          "confidence": 0.2
+        }
+      ],
+      "grams": {
+        "low": 80,
+        "likely": 120,
+        "high": 160
+      },
+      "confidence": 0.6,
+      "bbox": [
+        0.2,
+        0.5,
+        0.44,
+        0.2
+      ]
+    }
+  ],
+  "context": {
+    "container": {
+      "type": "bowl",
+      "confidence": 0.95
+    },
+    "brandMarks": [
+      {
+        "text": "HORIZON ORGANIC",
+        "confidence": 0.95
+      },
+      {
+        "text": "PREMIUM FREEZE DRIED STRAWBERRIES",
+        "confidence": 0.95
+      }
+    ],
+    "placeHint": {
+      "text": "",
+      "confidence": 0
+    },
+    "scaleVisible": true
+  },
+  "provenance": {
+    "call": "spark.identify",
+    "mode": "live",
+    "model": "muse-spark-1.3",
+    "requestId": "906a6a2b-d78b-49cb-8f4b-52cbf52847a1",
+    "inputSha256": "c462900e4611b1dee156c575bd4b5f5d49d47ab8274f9e96b636548ab0e204d9",
+    "at": "2026-10-31T13:05:19.401Z",
+    "latencyMs": 6826,
+    "strippedNutrientFields": false
+  }
+}
