@@ -15,6 +15,10 @@ Meta API access is bring-your-own-key: set the key in your environment (see
 `docs/INTEGRATION.md` → Configuration). Without a key the app runs in mock mode
 against recorded sample runs.
 
+Copy `.env.example` to `.env` and fill in your keys to run live. The
+recorded samples carry their provenance (`data/samples/*/provenance.json`),
+so the keyless mode is fully inspectable.
+
 ## Run the app
 
 ```bash
@@ -46,4 +50,7 @@ A dependency-free static PWA (`web/`) served by `server.mjs` (node:http only).
 
 ## Data sources
 
-Nutrient data: USDA FoodData Central (public domain, via API). Packaged-food data: Open Food Facts (https://world.openfoodfacts.org), available under the Open Database License (ODbL). Benchmark method and results: see BENCHMARK.md. Repo provenance: see PROVENANCE.md.
+Nutrient data: USDA FoodData Central (public domain, via API). Packaged-food data: Open Food Facts (https://world.openfoodfacts.org), available under the Open Database License (ODbL). Benchmark method and results: see BENCHMARK.md. Barcode lookup is local: download the Open Food Facts CSV export and run
+`node scripts/import-off.mjs <products.csv>` once to build the index;
+without that step the barcode entry reports itself unavailable and
+everything else works. Repo provenance: see PROVENANCE.md.
