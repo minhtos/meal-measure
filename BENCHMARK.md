@@ -27,9 +27,10 @@ growing; this file is updated as meals are scored.
 | 003 | Phở bò, component-weighed (Oct 28) | 882 g | 608 g | −31% | **no** |
 | 004 | Tacos de trompo, restaurant (Oct 29) | 278 g | 333 g | +20% | yes |
 | 005 | Phở bò, component-weighed (Oct 29) | 846 g | 355 g | −58% | **no** |
+| 006 | Cereal bowl, home (Oct 31) | 136 g | 76 g | −44% | **no** |
 
-Running summary (n = 5): median absolute error ≈ 20%; 3 of 5 totals within
-±20%; 3 of 5 truths inside the stated range.
+Running summary (n = 6): median absolute error ≈ 26%; 3 of 6 totals within
+±20%; 3 of 6 truths inside the stated range.
 
 ## The scale-display hazard (meals 003–005)
 
@@ -76,6 +77,15 @@ Design consequences, implemented in the pipeline:
 - **Database gaps:** USDA has no defensible entry for bánh cuốn; the
   matcher labels such items with their source tier instead of inventing
   numbers (see the design doc's tier rules).
+- **Matcher ranking (meal 006):** the database matcher ranked plainly
+  wrong entries first for two of three items: freeze-dried strawberries
+  drew freeze-dried herbs (chives, parsley, shallots), and cow's milk
+  drew milk crackers (446 kcal/100 g) with fluid milk absent from the
+  top candidates. Priced with those entries the meal's calories land
+  about +81% high (label-based truth ~190 kcal) while its weight lands
+  -44% low. This is the failure the correction dropdown and near-miss
+  flag exist for: an estimate is only as good as the entry the user
+  can see and change.
 
 ## Provenance
 
@@ -96,6 +106,16 @@ identification prompt, same photos):
   showed 59.54 oz). The reading stayed unconfirmed and could not be
   logged - the confirmation gate, not the OCR, is what makes scale
   readings safe to use.
+- Meal 006 (cereal bowl, natural photo, first meal under the Oct 30
+  protocol): app total 76 g vs. truth 136 g -> -44%. Identification was
+  correct on all three items; the miss was the milk, mostly hidden in
+  the finished bowl (40 g likely vs. 106 g truth, out of range). Cereal
+  (+15%) and freeze-dried strawberries (+20%) were in range.
+- Meal 006, second photo (finished bowl on the scale, display in
+  grams, brands in frame): app total 172 g -> +26%, truth inside the
+  summed range; no sign of display use by the estimator, and the scale
+  OCR read 495 g with the correct unit, unconfirmed. Brand marks
+  (Horizon Organic, freeze-dried strawberries) were read as context.
 
 ## Nutrient-level scoring
 

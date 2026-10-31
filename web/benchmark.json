@@ -51,11 +51,21 @@
       "errorPct": -58,
       "errorLabel": "−58%",
       "inRange": false
+    },
+    {
+      "id": "006",
+      "label": "Cereal bowl, home",
+      "date": "Oct 31",
+      "truthG": 136,
+      "estimateG": 76,
+      "errorPct": -44.1,
+      "errorLabel": "−44%",
+      "inRange": false
     }
   ],
   "tally": {
-    "n": 5,
-    "medianAbsErrorPct": 19.8,
+    "n": 6,
+    "medianAbsErrorPct": 25.5,
     "within20": 3,
     "inRange": 3
   },
@@ -94,6 +104,14 @@
         "truthG": 846,
         "errorLabel": "-26%",
         "photoOnlyErrorLabel": "−58%"
+      },
+      {
+        "meal": "006",
+        "what": "cereal bowl, natural photo, first meal under the Oct 30\n  protocol",
+        "appTotalG": 76,
+        "truthG": 136,
+        "errorLabel": "-44%",
+        "photoOnlyErrorLabel": "−44%"
       }
     ]
   },
