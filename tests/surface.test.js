@@ -337,7 +337,7 @@ test('benchmark.json parses, is served, and matches BENCHMARK.md', async () => {
     assert.ok(doc.includes(`${m.truthG} g`) && doc.includes(`${m.estimateG} g`), `meal ${m.id} numbers appear in the document`);
     assert.ok(doc.includes(m.errorLabel), `meal ${m.id} ${m.errorLabel}`);
   }
-  assert.deepEqual(b.meals.filter((m) => !m.inRange).map((m) => m.id), ['003', '005'], 'misses are in the data');
+  assert.deepEqual(b.meals.filter((m) => !m.inRange).map((m) => m.id), ['003', '005', '006'], 'misses are in the data');
   assert.equal(b.scaleDisplay.ab.estimateG, 870);
   assert.equal(b.scaleDisplay.ab.truthG, 846);
   assert.ok(b.samNotes.length >= 2);
