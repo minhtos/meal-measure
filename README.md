@@ -19,6 +19,14 @@ Copy `.env.example` to `.env` and fill in your keys to run live. The
 recorded samples carry their provenance (`data/samples/*/provenance.json`),
 so the keyless mode is fully inspectable.
 
+**Barcode lookup (optional).** Barcode entry runs against a local Open
+Food Facts import — the data files are not in the repo. Download the
+Open Food Facts CSV export (tab-separated; a `.gz` export works too) and
+run `node scripts/import-off.mjs <products.csv>` once: it builds
+`data/off-us.jsonl` and `data/off-us.index.json` (US products only,
+git-ignored). Without this step, barcode entry reports itself unavailable
+and everything else works.
+
 ## Run the app
 
 ```bash
