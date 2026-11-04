@@ -5,7 +5,7 @@ identification → portion (scale weight or photo estimate as a range) →
 nutrients computed by code from USDA FoodData Central / Open Food Facts →
 user corrections → log with per-item source and confidence → plain day-view sums.
 
-Meta Global AI Developer Hackathon entry (build window 2026-10-27 to 2026-11-04).
+Meta Global AI Developer Hackathon entry (build window 2026-10-26 to 2026-11-04).
 
 ## Setup
 
@@ -61,4 +61,4 @@ A dependency-free static PWA (`web/`) served by `server.mjs` (node:http only).
 Nutrient data: USDA FoodData Central (public domain, via API). Packaged-food data: Open Food Facts (https://world.openfoodfacts.org), available under the Open Database License (ODbL). Benchmark method and results: see BENCHMARK.md. Barcode lookup is local: download the Open Food Facts CSV export and run
 `node scripts/import-off.mjs <products.csv>` once to build the index;
 without that step the barcode entry reports itself unavailable and
-everything else works. Repo provenance: see PROVENANCE.md.
+everything else works. Pre-existing material: a generic project scaffolding template, ported Oct 29, 2026 (repo plumbing only — .github/pull_request_template.md, .project.json, the CLAUDE.md scaffold, and the scripts/verify skeleton; it contains no application code — all product code was written during the event). Full provenance: see PROVENANCE.md.
