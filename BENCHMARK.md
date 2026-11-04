@@ -87,6 +87,14 @@ Design consequences, implemented in the pipeline:
   -44% low. This is the failure the correction dropdown and near-miss
   flag exist for: an estimate is only as good as the entry the user
   can see and change.
+- **Scale-OCR digit confusion (Nov 4, demo run):** the scale-OCR step
+  read a seven-segment display showing 545 g as "245" (5 misread as 2).
+  The reading never anchored silently: the confirm panel shows the raw
+  OCR text for the user to check against the display, and the
+  divergence check flagged the confirmed value as implausible (245 g
+  against a 485-985 g photo range) and asked the user to choose before
+  anything was distributed. Both guards worked as designed; the OCR
+  step itself remains a known weak point on seven-segment displays.
 
 ## Provenance
 
