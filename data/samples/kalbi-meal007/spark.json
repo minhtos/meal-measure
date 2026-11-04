@@ -1,0 +1,98 @@
+{
+  "items": [
+    {
+      "itemId": "i1",
+      "regionId": null,
+      "name": "cooked white rice",
+      "preparation": "steamed",
+      "alternatives": [
+        {
+          "name": "jasmine rice, cooked",
+          "confidence": 0.3
+        }
+      ],
+      "grams": {
+        "low": 70,
+        "likely": 110,
+        "high": 150
+      },
+      "confidence": 0.9,
+      "bbox": [
+        0.23,
+        0.325,
+        0.48,
+        0.26
+      ]
+    },
+    {
+      "itemId": "i2",
+      "regionId": null,
+      "name": "braised beef short ribs, bone-in",
+      "preparation": "braised",
+      "alternatives": [
+        {
+          "name": "braised pork spare ribs, bone-in",
+          "confidence": 0.3
+        }
+      ],
+      "grams": {
+        "low": 110,
+        "likely": 150,
+        "high": 200
+      },
+      "confidence": 0.65,
+      "bbox": [
+        0.125,
+        0.47,
+        0.4,
+        0.34
+      ]
+    },
+    {
+      "itemId": "i3",
+      "regionId": null,
+      "name": "cooked Chinese broccoli",
+      "preparation": "blanched",
+      "alternatives": [
+        {
+          "name": "cooked bok choy",
+          "confidence": 0.35
+        }
+      ],
+      "grams": {
+        "low": 50,
+        "likely": 75,
+        "high": 105
+      },
+      "confidence": 0.8,
+      "bbox": [
+        0.325,
+        0.475,
+        0.49,
+        0.39
+      ]
+    }
+  ],
+  "context": {
+    "container": {
+      "type": "bowl",
+      "confidence": 0.95
+    },
+    "brandMarks": [],
+    "placeHint": {
+      "text": "",
+      "confidence": 0
+    },
+    "scaleVisible": false
+  },
+  "provenance": {
+    "call": "spark.identify",
+    "mode": "live",
+    "model": "muse-spark-1.3",
+    "requestId": "2565c137-44ad-421e-b03d-a4187fc31fb1",
+    "inputSha256": "d2d76a45ab216d4541afcb758f762fd1ca5931a328bc0e66bf928a233bbf61f6",
+    "at": "2026-11-04T13:54:34.200Z",
+    "latencyMs": 16289,
+    "strippedNutrientFields": false
+  }
+}

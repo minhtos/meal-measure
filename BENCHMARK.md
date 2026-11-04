@@ -28,9 +28,10 @@ growing; this file is updated as meals are scored.
 | 004 | Tacos de trompo, restaurant (Oct 29) | 278 g | 333 g | +20% | yes |
 | 005 | Phở bò, component-weighed (Oct 29) | 846 g | 355 g | −58% | **no** |
 | 006 | Cereal bowl, home (Oct 31) | 136 g | 76 g | −44% | **no** |
+| 007 | Beef kalbi + rice + gai lan bowl, home (Nov 4) | 235 g | 335 g | +43% | yes |
 
-Running summary (n = 6): median absolute error ≈ 26%; 3 of 6 totals within
-±20%; 3 of 6 truths inside the stated range.
+Running summary (n = 7): median absolute error ≈ 31%; 3 of 7 totals within
+±20%; 4 of 7 truths inside the stated range.
 
 ## The scale-display hazard (meals 003–005)
 
@@ -116,6 +117,20 @@ identification prompt, same photos):
   summed range; no sign of display use by the estimator, and the scale
   OCR read 495 g with the correct unit, unconfirmed. Brand marks
   (Horizon Organic, freeze-dried strawberries) were read as context.
+- Meal 007 (beef kalbi + rice + gai lan bowl, natural photo): app total
+  335 g vs. truth 235 g -> +43%, truth inside the summed range
+  (230-455 g). Rice +28% and kalbi +32% in range - Spark named the kalbi
+  "braised beef short ribs" (right cut, wrong preparation), and the
+  matcher's top rice entry was glutinous rice, flagged near-miss. The
+  miss was the gai lan: 75 g likely vs. 35 g truth (+114%) with the
+  database entry exactly right - a small pile of greens reads bigger
+  than it is.
+- Meal 007, second photo (finished bowl on the scale, display in
+  grams): app total 290 g -> +23%, truth in range; no display
+  anchoring. The species call flipped between the two photos of the
+  same dish - "grilled pork chop" here, with grams nearly exact
+  (110 g vs. 114 g truth) - while the matcher priced a veal chop
+  entry. Identification is less stable than portion estimation.
 
 ## Nutrient-level scoring
 

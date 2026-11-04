@@ -1,0 +1,371 @@
+{
+  "recordedAt": "2026-11-04T13:54:47.621Z",
+  "mode": "live",
+  "items": {
+    "i1": {
+      "matchCandidates": [
+        {
+          "candidateId": "usda-fdc:169711",
+          "db": "usda-fdc",
+          "id": "169711",
+          "name": "Rice, white, glutinous, unenriched, cooked",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "fat": 0.19,
+            "carbs": 21.1,
+            "kcal": 97,
+            "protein": 2.02
+          },
+          "score": 0.75,
+          "formConcern": null,
+          "fetchedAt": "2026-11-04T13:54:48.211Z"
+        },
+        {
+          "candidateId": "usda-fdc:168930",
+          "db": "usda-fdc",
+          "id": "168930",
+          "name": "Rice, white, medium-grain, cooked, unenriched",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "fat": 0.21,
+            "carbs": 28.6,
+            "kcal": 130,
+            "protein": 2.38
+          },
+          "score": 0.667,
+          "formConcern": null,
+          "fetchedAt": "2026-11-04T13:54:48.211Z"
+        },
+        {
+          "candidateId": "usda-fdc:168880",
+          "db": "usda-fdc",
+          "id": "168880",
+          "name": "Rice, white, medium-grain, enriched, cooked",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "fat": 0.21,
+            "carbs": 28.6,
+            "kcal": 130,
+            "protein": 2.38
+          },
+          "score": 0.667,
+          "formConcern": null,
+          "fetchedAt": "2026-11-04T13:54:48.211Z"
+        },
+        {
+          "candidateId": "usda-fdc:168932",
+          "db": "usda-fdc",
+          "id": "168932",
+          "name": "Rice, white, short-grain, cooked, unenriched",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "fat": 0.19,
+            "carbs": 28.7,
+            "kcal": 130,
+            "protein": 2.36
+          },
+          "score": 0.667,
+          "formConcern": null,
+          "fetchedAt": "2026-11-04T13:54:48.211Z"
+        },
+        {
+          "candidateId": "usda-fdc:168882",
+          "db": "usda-fdc",
+          "id": "168882",
+          "name": "Rice, white, short-grain, enriched, cooked",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "carbs": 28.7,
+            "kcal": 130,
+            "fat": 0.19,
+            "protein": 2.36
+          },
+          "score": 0.667,
+          "formConcern": null,
+          "fetchedAt": "2026-11-04T13:54:48.211Z"
+        }
+      ],
+      "per100g": {
+        "fat": 0.19,
+        "carbs": 21.1,
+        "kcal": 97,
+        "protein": 2.02
+      },
+      "nutrientSource": {
+        "db": "usda-fdc",
+        "id": "169711",
+        "dataType": "SR Legacy",
+        "fetchedAt": "2026-11-04T13:54:48.211Z"
+      },
+      "nutrients": {
+        "kcal": {
+          "low": 67.9,
+          "likely": 106.7,
+          "high": 145.5
+        },
+        "protein": {
+          "low": 1.4,
+          "likely": 2.2,
+          "high": 3
+        },
+        "carbs": {
+          "low": 14.8,
+          "likely": 23.2,
+          "high": 31.7
+        },
+        "fat": {
+          "low": 0.1,
+          "likely": 0.2,
+          "high": 0.3
+        }
+      },
+      "nearMiss": true,
+      "nearMissReasons": [
+        "close-scores"
+      ]
+    },
+    "i2": {
+      "matchCandidates": [
+        {
+          "candidateId": "usda-fdc:172167",
+          "db": "usda-fdc",
+          "id": "172167",
+          "name": "Beef, rib, back ribs, bone-in, separable lean and fat, trimmed to 0\" fat, choice, cooked, braised",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "protein": 23.3,
+            "fat": 31,
+            "carbs": 0,
+            "kcal": 372
+          },
+          "score": 0.476,
+          "formConcern": null,
+          "fetchedAt": "2026-11-04T13:54:48.571Z"
+        },
+        {
+          "candidateId": "usda-fdc:172168",
+          "db": "usda-fdc",
+          "id": "172168",
+          "name": "Beef, rib, back ribs, bone-in, separable lean and fat, trimmed to 0\" fat, select, cooked, braised",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "fat": 26.6,
+            "carbs": 0,
+            "kcal": 341,
+            "protein": 25.6
+          },
+          "score": 0.476,
+          "formConcern": null,
+          "fetchedAt": "2026-11-04T13:54:48.571Z"
+        },
+        {
+          "candidateId": "usda-fdc:172146",
+          "db": "usda-fdc",
+          "id": "172146",
+          "name": "Beef, rib, back ribs, bone-in, separable lean only, trimmed to 0\" fat, choice, cooked, braised",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "fat": 21.7,
+            "carbs": 0,
+            "kcal": 306,
+            "protein": 27.8
+          },
+          "score": 0.476,
+          "formConcern": null,
+          "fetchedAt": "2026-11-04T13:54:48.571Z"
+        },
+        {
+          "candidateId": "usda-fdc:172148",
+          "db": "usda-fdc",
+          "id": "172148",
+          "name": "Beef, rib, back ribs, bone-in, separable lean only, trimmed to 0\" fat, select, cooked, braised",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "fat": 18.8,
+            "carbs": 0,
+            "kcal": 287,
+            "protein": 29.3
+          },
+          "score": 0.476,
+          "formConcern": null,
+          "fetchedAt": "2026-11-04T13:54:48.571Z"
+        },
+        {
+          "candidateId": "usda-fdc:171223",
+          "db": "usda-fdc",
+          "id": "171223",
+          "name": "Beef, chuck, short ribs, boneless, separable lean and fat, trimmed to 0\" fat, choice, cooked, braised",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "fat": 24,
+            "carbs": 0,
+            "kcal": 317,
+            "protein": 25.3
+          },
+          "score": 0.381,
+          "formConcern": null,
+          "fetchedAt": "2026-11-04T13:54:48.571Z"
+        }
+      ],
+      "per100g": {
+        "protein": 23.3,
+        "fat": 31,
+        "carbs": 0,
+        "kcal": 372
+      },
+      "nutrientSource": {
+        "db": "usda-fdc",
+        "id": "172167",
+        "dataType": "SR Legacy",
+        "fetchedAt": "2026-11-04T13:54:48.571Z"
+      },
+      "nutrients": {
+        "kcal": {
+          "low": 409.2,
+          "likely": 576.6,
+          "high": 744
+        },
+        "protein": {
+          "low": 25.6,
+          "likely": 36.1,
+          "high": 46.6
+        },
+        "carbs": {
+          "low": 0,
+          "likely": 0,
+          "high": 0
+        },
+        "fat": {
+          "low": 34.1,
+          "likely": 48.1,
+          "high": 62
+        }
+      },
+      "nearMiss": true,
+      "nearMissReasons": [
+        "close-scores",
+        "low-score"
+      ]
+    },
+    "i3": {
+      "matchCandidates": [
+        {
+          "candidateId": "usda-fdc:169392",
+          "db": "usda-fdc",
+          "id": "169392",
+          "name": "Broccoli, chinese, cooked",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "carbs": 3.81,
+            "kcal": 22,
+            "protein": 1.14,
+            "fat": 0.72
+          },
+          "score": 1,
+          "formConcern": null,
+          "fetchedAt": "2026-11-04T13:54:49.010Z"
+        },
+        {
+          "candidateId": "usda-fdc:169404",
+          "db": "usda-fdc",
+          "id": "169404",
+          "name": "Broccoli, chinese, raw",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "fat": 0.76,
+            "carbs": 4.67,
+            "protein": 1.2,
+            "kcal": 26
+          },
+          "score": 0.667,
+          "formConcern": null,
+          "fetchedAt": "2026-11-04T13:54:49.010Z"
+        },
+        {
+          "candidateId": "usda-fdc:170382",
+          "db": "usda-fdc",
+          "id": "170382",
+          "name": "Broccoli raab, cooked",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "kcal": 25,
+            "carbs": 3.12,
+            "protein": 3.83,
+            "fat": 0.52
+          },
+          "score": 0.667,
+          "formConcern": null,
+          "fetchedAt": "2026-11-04T13:54:49.010Z"
+        },
+        {
+          "candidateId": "usda-fdc:168517",
+          "db": "usda-fdc",
+          "id": "168517",
+          "name": "Cabbage, chinese (pak-choi), cooked, boiled, drained, with salt",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "carbs": 1.78,
+            "kcal": 12,
+            "fat": 0.16,
+            "protein": 1.56
+          },
+          "score": 0.333,
+          "formConcern": null,
+          "fetchedAt": "2026-11-04T13:54:49.010Z"
+        },
+        {
+          "candidateId": "usda-fdc:169337",
+          "db": "usda-fdc",
+          "id": "169337",
+          "name": "Cabbage, chinese (pe-tsai), cooked, boiled, drained, with salt",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "protein": 1.5,
+            "fat": 0.17,
+            "carbs": 2.41,
+            "kcal": 14
+          },
+          "score": 0.333,
+          "formConcern": null,
+          "fetchedAt": "2026-11-04T13:54:49.010Z"
+        }
+      ],
+      "per100g": {
+        "carbs": 3.81,
+        "kcal": 22,
+        "protein": 1.14,
+        "fat": 0.72
+      },
+      "nutrientSource": {
+        "db": "usda-fdc",
+        "id": "169392",
+        "dataType": "SR Legacy",
+        "fetchedAt": "2026-11-04T13:54:49.010Z"
+      },
+      "nutrients": {
+        "kcal": {
+          "low": 11,
+          "likely": 17.2,
+          "high": 23.1
+        },
+        "protein": {
+          "low": 0.6,
+          "likely": 0.9,
+          "high": 1.2
+        },
+        "carbs": {
+          "low": 1.9,
+          "likely": 3,
+          "high": 4
+        },
+        "fat": {
+          "low": 0.4,
+          "likely": 0.6,
+          "high": 0.8
+        }
+      },
+      "nearMiss": false,
+      "nearMissReasons": []
+    }
+  }
+}

@@ -1,0 +1,355 @@
+{
+  "recordedAt": "2026-11-04T13:55:17.824Z",
+  "mode": "live",
+  "items": {
+    "i1": {
+      "matchCandidates": [
+        {
+          "candidateId": "usda-fdc:169711",
+          "db": "usda-fdc",
+          "id": "169711",
+          "name": "Rice, white, glutinous, unenriched, cooked",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "fat": 0.19,
+            "carbs": 21.1,
+            "kcal": 97,
+            "protein": 2.02
+          },
+          "score": 0.75,
+          "formConcern": null,
+          "fetchedAt": "2026-11-04T13:54:48.211Z"
+        },
+        {
+          "candidateId": "usda-fdc:168930",
+          "db": "usda-fdc",
+          "id": "168930",
+          "name": "Rice, white, medium-grain, cooked, unenriched",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "fat": 0.21,
+            "carbs": 28.6,
+            "kcal": 130,
+            "protein": 2.38
+          },
+          "score": 0.667,
+          "formConcern": null,
+          "fetchedAt": "2026-11-04T13:54:48.211Z"
+        },
+        {
+          "candidateId": "usda-fdc:168880",
+          "db": "usda-fdc",
+          "id": "168880",
+          "name": "Rice, white, medium-grain, enriched, cooked",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "fat": 0.21,
+            "carbs": 28.6,
+            "kcal": 130,
+            "protein": 2.38
+          },
+          "score": 0.667,
+          "formConcern": null,
+          "fetchedAt": "2026-11-04T13:54:48.211Z"
+        },
+        {
+          "candidateId": "usda-fdc:168932",
+          "db": "usda-fdc",
+          "id": "168932",
+          "name": "Rice, white, short-grain, cooked, unenriched",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "fat": 0.19,
+            "carbs": 28.7,
+            "kcal": 130,
+            "protein": 2.36
+          },
+          "score": 0.667,
+          "formConcern": null,
+          "fetchedAt": "2026-11-04T13:54:48.211Z"
+        },
+        {
+          "candidateId": "usda-fdc:168882",
+          "db": "usda-fdc",
+          "id": "168882",
+          "name": "Rice, white, short-grain, enriched, cooked",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "carbs": 28.7,
+            "kcal": 130,
+            "fat": 0.19,
+            "protein": 2.36
+          },
+          "score": 0.667,
+          "formConcern": null,
+          "fetchedAt": "2026-11-04T13:54:48.211Z"
+        }
+      ],
+      "per100g": {
+        "fat": 0.19,
+        "carbs": 21.1,
+        "kcal": 97,
+        "protein": 2.02
+      },
+      "nutrientSource": {
+        "db": "usda-fdc",
+        "id": "169711",
+        "dataType": "SR Legacy",
+        "fetchedAt": "2026-11-04T13:54:48.211Z"
+      },
+      "nutrients": {
+        "kcal": {
+          "low": 77.6,
+          "likely": 106.7,
+          "high": 135.8
+        },
+        "protein": {
+          "low": 1.6,
+          "likely": 2.2,
+          "high": 2.8
+        },
+        "carbs": {
+          "low": 16.9,
+          "likely": 23.2,
+          "high": 29.5
+        },
+        "fat": {
+          "low": 0.2,
+          "likely": 0.2,
+          "high": 0.3
+        }
+      },
+      "nearMiss": true,
+      "nearMissReasons": [
+        "close-scores"
+      ]
+    },
+    "i2": {
+      "matchCandidates": [
+        {
+          "candidateId": "usda-fdc:172644",
+          "db": "usda-fdc",
+          "id": "172644",
+          "name": "Veal, loin, chop, separable lean only, cooked, grilled",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "protein": 29.8,
+            "fat": 4.44,
+            "carbs": 0.07,
+            "kcal": 159
+          },
+          "score": 0.364,
+          "formConcern": null,
+          "fetchedAt": "2026-11-04T13:55:18.308Z"
+        },
+        {
+          "candidateId": "usda-fdc:172650",
+          "db": "usda-fdc",
+          "id": "172650",
+          "name": "Veal, loin, chop, separable lean and fat, cooked, grilled",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "carbs": 0.16,
+            "kcal": 198,
+            "protein": 28,
+            "fat": 9.48
+          },
+          "score": 0.333,
+          "formConcern": null,
+          "fetchedAt": "2026-11-04T13:55:18.308Z"
+        },
+        {
+          "candidateId": "usda-fdc:174881",
+          "db": "usda-fdc",
+          "id": "174881",
+          "name": "Veal, shoulder, blade chop, separable lean only, cooked, grilled",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "fat": 5.53,
+            "carbs": 0,
+            "kcal": 159,
+            "protein": 27.3
+          },
+          "score": 0.333,
+          "formConcern": null,
+          "fetchedAt": "2026-11-04T13:55:18.308Z"
+        },
+        {
+          "candidateId": "usda-fdc:172651",
+          "db": "usda-fdc",
+          "id": "172651",
+          "name": "Veal, shoulder, blade chop, separable lean and fat, cooked, grilled",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "carbs": 0.15,
+            "kcal": 199,
+            "fat": 10.6,
+            "protein": 25.7
+          },
+          "score": 0.308,
+          "formConcern": null,
+          "fetchedAt": "2026-11-04T13:55:18.308Z"
+        }
+      ],
+      "per100g": {
+        "protein": 29.8,
+        "fat": 4.44,
+        "carbs": 0.07,
+        "kcal": 159
+      },
+      "nutrientSource": {
+        "db": "usda-fdc",
+        "id": "172644",
+        "dataType": "SR Legacy",
+        "fetchedAt": "2026-11-04T13:55:18.308Z"
+      },
+      "nutrients": {
+        "kcal": {
+          "low": 127.2,
+          "likely": 179.7,
+          "high": 230.6
+        },
+        "protein": {
+          "low": 23.8,
+          "likely": 33.7,
+          "high": 43.2
+        },
+        "carbs": {
+          "low": 0.1,
+          "likely": 0.1,
+          "high": 0.1
+        },
+        "fat": {
+          "low": 3.6,
+          "likely": 5,
+          "high": 6.4
+        }
+      },
+      "nearMiss": true,
+      "nearMissReasons": [
+        "close-scores",
+        "low-score"
+      ]
+    },
+    "i3": {
+      "matchCandidates": [
+        {
+          "candidateId": "usda-fdc:169391",
+          "db": "usda-fdc",
+          "id": "169391",
+          "name": "Cauliflower, green, cooked, with salt",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "carbs": 6.28,
+            "kcal": 32,
+            "protein": 3.04,
+            "fat": 0.31
+          },
+          "score": 0.5,
+          "formConcern": null,
+          "fetchedAt": "2026-11-04T13:55:18.798Z"
+        },
+        {
+          "candidateId": "usda-fdc:168529",
+          "db": "usda-fdc",
+          "id": "168529",
+          "name": "Cowpeas, leafy tips, cooked, boiled, drained, with salt",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "protein": 4.67,
+            "fat": 0.1,
+            "carbs": 2.8,
+            "kcal": 22
+          },
+          "score": 0.364,
+          "formConcern": null,
+          "fetchedAt": "2026-11-04T13:55:18.798Z"
+        },
+        {
+          "candidateId": "usda-fdc:168406",
+          "db": "usda-fdc",
+          "id": "168406",
+          "name": "Cowpeas, leafy tips, cooked, boiled, drained, without salt",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "kcal": 22,
+            "fat": 0.1,
+            "carbs": 2.8,
+            "protein": 4.67
+          },
+          "score": 0.364,
+          "formConcern": null,
+          "fetchedAt": "2026-11-04T13:55:18.798Z"
+        },
+        {
+          "candidateId": "usda-fdc:168495",
+          "db": "usda-fdc",
+          "id": "168495",
+          "name": "Balsam-pear (bitter gourd), leafy tips, cooked, boiled, drained, with salt",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "carbs": 6.16,
+            "kcal": 32,
+            "protein": 3.6,
+            "fat": 0.2
+          },
+          "score": 0.286,
+          "formConcern": null,
+          "fetchedAt": "2026-11-04T13:55:18.798Z"
+        },
+        {
+          "candidateId": "usda-fdc:169224",
+          "db": "usda-fdc",
+          "id": "169224",
+          "name": "Cowpeas, leafy tips, raw",
+          "dataType": "SR Legacy",
+          "per100g": {
+            "protein": 4.1,
+            "fat": 0.25,
+            "carbs": 4.82,
+            "kcal": 29
+          },
+          "score": 0.286,
+          "formConcern": null,
+          "fetchedAt": "2026-11-04T13:55:18.798Z"
+        }
+      ],
+      "per100g": {
+        "carbs": 6.28,
+        "kcal": 32,
+        "protein": 3.04,
+        "fat": 0.31
+      },
+      "nutrientSource": {
+        "db": "usda-fdc",
+        "id": "169391",
+        "dataType": "SR Legacy",
+        "fetchedAt": "2026-11-04T13:55:18.798Z"
+      },
+      "nutrients": {
+        "kcal": {
+          "low": 14.4,
+          "likely": 22.4,
+          "high": 30.4
+        },
+        "protein": {
+          "low": 1.4,
+          "likely": 2.1,
+          "high": 2.9
+        },
+        "carbs": {
+          "low": 2.8,
+          "likely": 4.4,
+          "high": 6
+        },
+        "fat": {
+          "low": 0.1,
+          "likely": 0.2,
+          "high": 0.3
+        }
+      },
+      "nearMiss": false,
+      "nearMissReasons": []
+    }
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "recordedAt": "2026-11-04T13:55:26.683Z",
+  "mode": "live",
+  "models": {
+    "spark": "muse-spark-1.3",
+    "sam": "sam-3.1"
+  },
+  "requestIds": [
+    {
+      "call": "spark.identify",
+      "prompt": null,
+      "requestId": "deeaf359-cb7c-4e89-8910-f1ec89963f5e"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the plate",
+      "requestId": "107a222d-26dc-4f3c-bca4-2515e99d76a7"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the bowl",
+      "requestId": "88542c88-a4fe-4930-8afe-28234ef74a28"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the white rice",
+      "requestId": "74f08027-18c7-4f9c-b12d-5a1c5d89f08b"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the pork chop",
+      "requestId": "76bb4b12-390d-4592-8ec6-75859e4a8bf5"
+    },
+    {
+      "call": "sam.segment",
+      "prompt": "the leafy greens",
+      "requestId": "45ae1aaa-a122-4e45-8c3f-024783db1c55"
+    },
+    {
+      "call": "scale.ocr",
+      "prompt": null,
+      "requestId": "9472c766-a4ea-400f-9bde-34d5edb587c1"
+    }
+  ],
+  "inputSha256": "8a72712f3237e50a0dfb4bc438725aae0acdba5c8c302238c93d2dade094b530",
+  "codeVersion": "377894b066aabecd9abd3614e88d6cc58760c64e",
+  "recordedBy": "scripts/record-sample.mjs",
+  "errors": []
+}

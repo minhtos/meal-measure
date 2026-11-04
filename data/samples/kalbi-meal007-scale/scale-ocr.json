@@ -1,0 +1,16 @@
+{
+  "value": 598,
+  "unit": "g",
+  "secondary": null,
+  "rawText": "598 g",
+  "status": "unconfirmed",
+  "provenance": {
+    "call": "scale.ocr",
+    "mode": "live",
+    "model": "muse-spark-1.3",
+    "requestId": "9472c766-a4ea-400f-9bde-34d5edb587c1",
+    "inputSha256": "8a72712f3237e50a0dfb4bc438725aae0acdba5c8c302238c93d2dade094b530",
+    "at": "2026-11-04T13:55:26.682Z",
+    "latencyMs": 7805
+  }
+}
